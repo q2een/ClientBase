@@ -1,0 +1,18 @@
+﻿@model IEnumerable<Founder>
+
+@foreach (var founder in Model)
+{
+    <div>
+        <h2>@founder.FullName</h2>
+        <span>@founder.TaxpayerId</span>
+
+        @if (@founder.Companies.Count > 0)
+        {
+            <h5>Компании</h5>
+            @foreach (var company in @founder.Companies)
+            {
+                <p>@company.Company.Name</p>
+            }
+        }
+    </div>
+}
