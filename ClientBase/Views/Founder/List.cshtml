@@ -1,18 +1,28 @@
 ﻿@model IEnumerable<Founder>
-
-@foreach (var founder in Model)
-{
-    <div>
-        <h2>@founder.FullName</h2>
-        <span>@founder.TaxpayerId</span>
-
-        @if (@founder.Companies.Count > 0)
-        {
-            <h5>Компании</h5>
-            @foreach (var company in @founder.Companies)
-            {
-                <p>@company.Company.Name</p>
-            }
-        }
+<div class="row">
+    <div class="action-buttons col-12">
+    <a class="btn btn-sm btn-success float-right" asp-action="Create">Добавить</a>
     </div>
-}
+    @foreach (var founder in Model)
+    {
+        <div class="col-6 mt-2">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">@founder.FullName</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">ИНН: @founder.TaxpayerId</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Добавлена: @founder.CreationDate.ToLongTimeString()</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Изменено: @founder.UpdateDate?.ToLongDateString()</h6>
+                    <p class="card-text">Компании: @founder.Companies.Count</p>
+                    <a asp-action="Details" asp-route-id="@founder.FounderId" class="card-link">Подробнее</a>
+                    <a asp-action="Edit" asp-route-id="@founder.FounderId" class="btn btn-sm btn-light">Редактировать</a>
+                    <form asp-action="Delete" method="post" class="float-right">
+                        <input type="hidden" name="ProductID" value="@founder.FounderId" />
+                        <button type="submit" class="btn btn-danger btn-sm">
+                            Удалить
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
+</div>

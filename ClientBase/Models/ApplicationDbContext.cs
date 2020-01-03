@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Debug;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +10,8 @@ namespace ClientBase.Models
 {
     public class ApplicationDbContext : DbContext
     {
+        private readonly LoggerFactory logger = new LoggerFactory(new[] { new DebugLoggerProvider() });
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
@@ -29,6 +33,11 @@ namespace ClientBase.Models
             modelBuilder.Entity<Company>()
                         .HasIndex(p => p.TaxpayerId)
                         .IsUnique();
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseLoggerFactory(logger);
         }
     }
 }

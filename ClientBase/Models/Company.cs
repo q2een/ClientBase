@@ -11,10 +11,13 @@ namespace ClientBase.Models
     {
         public int CompanyId { get; set; }
 
+        [Display(Name = "ИНН")]
         public long TaxpayerId { get; set; }
 
+        [Display(Name = "Наименование")]
         public string Name { get; set; }
 
+        [Display(Name = "Тип")]
         public bool? IsIndividual { get; set; }
 
         public DateTime CreationDate { get; set; }

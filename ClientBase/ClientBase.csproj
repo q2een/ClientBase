@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <UserSecretsId>a8a76e00-dd77-471b-abe8-8b66be1c640a</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,6 +14,12 @@
     <Compile Remove="Migrations\20191228092541_initial.Designer.cs" />
     <Compile Remove="Migrations\20191228100946_ChangeIdentotyFields.cs" />
     <Compile Remove="Migrations\20191228100946_ChangeIdentotyFields.Designer.cs" />
+    <Compile Remove="Migrations\20191228103415_Initial.cs" />
+    <Compile Remove="Migrations\20191228103415_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200103135445_ChangePKDataGeneration.cs" />
+    <Compile Remove="Migrations\20200103135445_ChangePKDataGeneration.Designer.cs" />
+    <Compile Remove="Migrations\20200103140125_Initial.cs" />
+    <Compile Remove="Migrations\20200103140125_Initial.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +29,11 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\" />
   </ItemGroup>
 
 </Project>

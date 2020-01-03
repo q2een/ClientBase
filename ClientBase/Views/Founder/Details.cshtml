@@ -1,0 +1,34 @@
+﻿@model Founder;
+
+<h2>@Model.FullName</h2>
+<p class="h6 text-muted">ИНН: @Model.TaxpayerId</p>
+
+<ul class="list-inline">
+    <li class="list-inline-item">Добавлен в базу: @Model.CreationDate.ToLongDateString()</li>
+    <li class="list-inline-item">Информация обновлена: @Model.UpdateDate?.ToLongDateString()</li>
+</ul>
+
+<div class="action">
+    <a asp-action="Edit" asp-route-id="@Model.FounderId">Редактировать</a>
+    <a asp-action="Delete" asp-route-id="@Model.FounderId" class="badge badge-danger">Удалить</a>
+</div>
+
+@if (@Model.Companies.Any())
+{
+<section class="companies mt-4">
+    <h3>Является учредителем</h3>
+    <ul class="list-group list-group-flush">
+        @{ var index = 1; }
+        @foreach (var company in Model.Companies)
+        {
+            <li class="list-group-item">
+                <span class="text-muted">@index </span>
+                <a asp-action="Details" asp-controller="Company" class="stretched-link" asp-route-id="@company.CompanyId">
+                    @company.Company.Name
+                </a>
+            </li>
+            index++;
+        }
+    </ul>
+</section>
+}

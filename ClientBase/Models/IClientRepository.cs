@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Threading.Tasks;
 
 namespace ClientBase.Models
 {
@@ -7,5 +8,7 @@ namespace ClientBase.Models
         IQueryable<Company> Companies { get; }
         
         IQueryable<Founder> Founders { get; }
+
+        Task<bool> UpdateFounderAsync(Founder founder);
     }
 }
