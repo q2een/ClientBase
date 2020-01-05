@@ -20,8 +20,14 @@ namespace ClientBase.Models
         public IQueryable<Founder> Founders => context.Founders.Include(f => f.Companies)
                                                                .ThenInclude(cf => cf.Company);
 
-        public async Task<bool> UpdateFounderAsync(Founder founder)
+        public async Task UpdateFounderAsync(Founder founder)
         {
+            if (founder.FounderId == 0)
+            {
+                context.Founders.Add(founder);
+                await context.SaveChangesAsync();
+            }
+
             var entry = await context.Founders
                                      .SingleOrDefaultAsync(f => f.FounderId == founder.FounderId);
 
@@ -30,9 +36,8 @@ namespace ClientBase.Models
 
             entry.TaxpayerId = founder.TaxpayerId;
             entry.FullName = founder.FullName;
-            entry.UpdateDate = DateTime.Now;
 
-            return (await context.SaveChangesAsync()) > 0;
+            context.SaveChangesAsync();
         }
     }
 }

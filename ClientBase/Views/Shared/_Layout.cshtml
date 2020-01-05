@@ -33,8 +33,10 @@
         {
             <div class="alert alert-success">@TempData["message"]</div>
         }
-            @RenderBody()
-        </div>
-    <script asp-src-include="/lib/jquery/**/*.min.js"></script>
+        @RenderBody()
+    </div>
+    <script src="/lib/jquery/jquery.min.js"></script>
+    <script src="/lib/jquery-validate/jquery.validate.min.js"></script>
+    <script src="/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
 </body>
 </html>

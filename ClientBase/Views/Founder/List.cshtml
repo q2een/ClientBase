@@ -10,8 +10,8 @@
                 <div class="card-body">
                     <h5 class="card-title">@founder.FullName</h5>
                     <h6 class="card-subtitle mb-2 text-muted">ИНН: @founder.TaxpayerId</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Добавлена: @founder.CreationDate.ToLongTimeString()</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Изменено: @founder.UpdateDate?.ToLongDateString()</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Добавлена: @founder.CreationDate.ToString("dd/MM/yyyy в HH:mm")</h6>
+                    <h6 class="card-subtitle mb-2 text-muted">Изменено: @founder.UpdateDate?.ToString("dd/MM/yyyy в HH:mm")</h6>
                     <p class="card-text">Компании: @founder.Companies.Count</p>
                     <a asp-action="Details" asp-route-id="@founder.FounderId" class="card-link">Подробнее</a>
                     <a asp-action="Edit" asp-route-id="@founder.FounderId" class="btn btn-sm btn-light">Редактировать</a>

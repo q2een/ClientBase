@@ -9,6 +9,6 @@ namespace ClientBase.Models
         
         IQueryable<Founder> Founders { get; }
 
-        Task<bool> UpdateFounderAsync(Founder founder);
+        Task UpdateFounderAsync(Founder founder);
     }
 }

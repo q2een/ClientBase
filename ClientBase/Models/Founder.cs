@@ -12,7 +12,7 @@ namespace ClientBase.Models
     {
         public int FounderId { get; set; }
 
-        [Display(Name = "ИНН")]
+        [Display(Name = "Идентификационный номер налогоплательщика (ИНН)")]
         [Required(ErrorMessage = "Укажите ИНН")]
         [TaxpayerId]
         public long TaxpayerId { get; set; }

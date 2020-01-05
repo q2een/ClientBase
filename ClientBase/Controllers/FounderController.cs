@@ -26,7 +26,7 @@ namespace ClientBase.Controllers
 
         public async Task<IActionResult> Details(long? id)
         {
-            var founder = await GetFounder(id);
+            var founder = await GetFounderAsync(id);
 
             if (founder == null)
                 return NotFound();
@@ -36,7 +36,7 @@ namespace ClientBase.Controllers
 
         public async Task<IActionResult> Edit(long? id)
         {
-            var founder = await GetFounder(id);
+            var founder = await GetFounderAsync(id);
 
             if (founder == null)
                 return NotFound();
@@ -52,21 +52,28 @@ namespace ClientBase.Controllers
 
             try
             {
-                var result = await repository.UpdateFounderAsync(founder);
+                var isNew = founder.FounderId == 0;
 
-                if (result)
-                    TempData["message"] = "Данные о учредителе успешно обновлены";
+                if (isNew)
+                    founder.CreationDate = DateTime.Now;
+                else
+                    founder.UpdateDate = DateTime.Now;
+
+                await repository.UpdateFounderAsync(founder);
+                TempData["message"] = $"Данные об учредителе успешно {(isNew ? "добавлены" :"обновлены")}";
             }
             catch(DbUpdateException e)
             {
-                ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе.{Environment.NewLine}Возможно, учредитель был удален из базы данных");
+                ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе.Возможно, учредитель был удален из базы данных");
                 return View(founder);
             }
 
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task<Founder> GetFounder(long? id)
+        public IActionResult Create() => View("Edit", new Founder());
+
+        private async Task<Founder> GetFounderAsync(long? id)
         {
             if (id == null)
                 return null;
