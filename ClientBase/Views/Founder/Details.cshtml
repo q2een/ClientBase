@@ -13,13 +13,13 @@
     <a asp-action="Delete" asp-route-id="@Model.FounderId" class="badge badge-danger">Удалить</a>
 </div>
 
-@if (@Model.Companies.Any())
+@if (@Model.FounderCompanies.Any())
 {
 <section class="companies mt-4">
     <h3>Является учредителем</h3>
     <ul class="list-group list-group-flush">
         @{ var index = 1; }
-        @foreach (var company in Model.Companies)
+        @foreach (var company in Model.FounderCompanies)
         {
             <li class="list-group-item">
                 <span class="text-muted">@index </span>

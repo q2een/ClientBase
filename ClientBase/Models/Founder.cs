@@ -14,6 +14,7 @@ namespace ClientBase.Models
 
         [Display(Name = "Идентификационный номер налогоплательщика (ИНН)")]
         [Required(ErrorMessage = "Укажите ИНН")]
+        [Range(100000000000, 999999999999, ErrorMessage = "ИНН должен содержать 12 цифр")]
         [TaxpayerId]
         public long TaxpayerId { get; set; }
 
@@ -26,6 +27,6 @@ namespace ClientBase.Models
 
         public DateTime? UpdateDate { get; set; }
 
-        public ICollection<CompanyFounder> Companies { get; set; }
+        public ICollection<CompanyFounder> FounderCompanies { get; set; }
     }
 }

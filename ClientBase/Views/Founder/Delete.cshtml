@@ -1,0 +1,12 @@
+﻿@model Founder
+
+<h1>Удалить учредителя?</h1>
+<p class="text-danger">@ViewData["ErrorMessage"]</p>
+
+    <div class="text-center">
+        <form asp-action="Delete" method="post">
+            @Html.HiddenFor(f => f.FounderId)
+            <input class="btn btn-danger" type="submit" value="Удалить">
+            <a asp-action="Index" class="btn btn-outline-primary">Отмена</a>
+        </form>
+    </div>

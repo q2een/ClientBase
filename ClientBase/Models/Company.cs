@@ -24,6 +24,6 @@ namespace ClientBase.Models
 
         public DateTime? UpdateDate { get; set; }
 
-        public ICollection<CompanyFounder> Founders { get; set; }
+        public ICollection<CompanyFounder> CompanyFounders { get; set; }
     }
 }

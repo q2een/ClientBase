@@ -9,6 +9,10 @@ namespace ClientBase.Models
         
         IQueryable<Founder> Founders { get; }
 
+        IQueryable<Company> GetSingleFounderCompanies(int founderId);
+
         Task UpdateFounderAsync(Founder founder);
+
+        Task DeleteFounderAsync(int id);
     }
 }

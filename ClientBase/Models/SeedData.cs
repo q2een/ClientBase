@@ -37,7 +37,7 @@ namespace ClientBase.Models
                                               Name = $"ИП {founder.FullName}"
                                           };
 
-                                          company.Founders = new CompanyFounder[]
+                                          company.CompanyFounders = new CompanyFounder[]
                                           {
                                              new CompanyFounder
                                              {
@@ -85,7 +85,7 @@ namespace ClientBase.Models
                         Company = companies[i]
                     });
 
-                companies[i].Founders = companyFounders;
+                companies[i].CompanyFounders = companyFounders;
             }
 
             context.Founders.AddRange(founders);

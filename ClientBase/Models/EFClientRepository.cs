@@ -15,10 +15,25 @@ namespace ClientBase.Models
             this.context = context;
         }
 
-        public IQueryable<Company> Companies => context.Companies.Include(c => c.Founders)
-                                                                 .ThenInclude(cf=> cf.Founder);
-        public IQueryable<Founder> Founders => context.Founders.Include(f => f.Companies)
+        public IQueryable<Company> Companies => context.Companies.Include(c => c.CompanyFounders)
+                                                                 .ThenInclude(cf => cf.Founder);                                                                 
+        public IQueryable<Founder> Founders => context.Founders.Include(f => f.FounderCompanies)
                                                                .ThenInclude(cf => cf.Company);
+        public IQueryable<Company> GetSingleFounderCompanies(int founderId)
+        {
+            return Companies.Where(c => c.CompanyFounders.Count == 1 &&
+                                        c.CompanyFounders.Single().FounderId == founderId);
+        }
+
+        public async Task DeleteFounderAsync(int id)
+        {
+            var founder = await Founders.SingleOrDefaultAsync(f => f.FounderId == id);
+
+            context.Companies.RemoveRange(GetSingleFounderCompanies(id));
+            context.Founders.Remove(founder);
+
+            await context.SaveChangesAsync();
+        }
 
         public async Task UpdateFounderAsync(Founder founder)
         {
@@ -36,8 +51,9 @@ namespace ClientBase.Models
 
             entry.TaxpayerId = founder.TaxpayerId;
             entry.FullName = founder.FullName;
+            entry.UpdateDate = founder.UpdateDate;
 
-            context.SaveChangesAsync();
+            await context.SaveChangesAsync();
         }
     }
 }

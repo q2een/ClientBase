@@ -20,6 +20,8 @@
     <Compile Remove="Migrations\20200103135445_ChangePKDataGeneration.Designer.cs" />
     <Compile Remove="Migrations\20200103140125_Initial.cs" />
     <Compile Remove="Migrations\20200103140125_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200105213743_AddCompanyFoundersDbSet.cs" />
+    <Compile Remove="Migrations\20200105213743_AddCompanyFoundersDbSet.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

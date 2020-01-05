@@ -38,6 +38,8 @@ namespace ClientBase.Controllers
         {
             var founder = await GetFounderAsync(id);
 
+            var a = repository.Companies.Where(cf => cf.CompanyFounders.Count > 1).ToArray();
+
             if (founder == null)
                 return NotFound();
 
@@ -64,7 +66,7 @@ namespace ClientBase.Controllers
             }
             catch(DbUpdateException e)
             {
-                ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе.Возможно, учредитель был удален из базы данных");
+                ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе. Возможно, учредитель был удален из базы данных");
                 return View(founder);
             }
 
@@ -72,6 +74,35 @@ namespace ClientBase.Controllers
         }
 
         public IActionResult Create() => View("Edit", new Founder());
+
+        public async Task<IActionResult> Delete(int? id)
+        {
+            var founder = await GetFounderAsync(id);
+
+            if (founder == null)
+                return NotFound();
+
+            return View(founder);
+        }
+
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            try
+            {
+                await repository.DeleteFounderAsync(id);
+                TempData["message"] = $"Данные об учредителе успешно удалены";
+            }
+            catch (DbUpdateException e)
+            {
+                ViewData["ErrorMessage"] = "Ошибка при удалении учредителя из базы данны." + 
+                               "Попробуйте снова, и если проблема повторится, обратитесь к системному администатору";
+
+                return View(nameof(Delete), id);
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
 
         private async Task<Founder> GetFounderAsync(long? id)
         {
