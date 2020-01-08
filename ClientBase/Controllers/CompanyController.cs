@@ -70,7 +70,9 @@ namespace ClientBase.Controllers
                 else
                     company.UpdateDate = DateTime.Now;
 
-                //await repository.UpdateCompanyAsync(company);
+                EditHook(company);
+
+                await repository.UpdateCompanyAsync(company);
                 TempData["message"] = $"Данные об учредителе успешно {(isNew ? "добавлены" : "обновлены")}";
             }
             catch (DbUpdateException e)
@@ -80,6 +82,15 @@ namespace ClientBase.Controllers
             }
 
             return RedirectToAction(nameof(Index));
+        }
+
+        protected void EditHook(Company company)
+        {
+            foreach (var companyFounder in company.CompanyFounders)
+            {
+                companyFounder.Company = company;
+                companyFounder.CompanyId = company.CompanyId;
+            }
         }
 
 

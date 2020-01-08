@@ -71,6 +71,7 @@ namespace ClientBase.Models
             }
 
             var entry = await context.Companies
+                                     .Include(c => c.CompanyFounders)
                                      .SingleOrDefaultAsync(f => f.CompanyId == company.CompanyId);
 
             if (entry == null)
@@ -79,6 +80,7 @@ namespace ClientBase.Models
             entry.TaxpayerId = company.TaxpayerId;
             entry.Name = company.Name;
             entry.UpdateDate = company.UpdateDate;
+            entry.CompanyFounders = company.CompanyFounders;
 
             await context.SaveChangesAsync();
         }

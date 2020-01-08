@@ -56,7 +56,7 @@ namespace ClientBase.Controllers
         }
 
         [HttpPost]
-        public async Task<JsonResult> GetFounders([FromBody] SearchQuery query)
+        public async Task<JsonResult> Find([FromBody] SearchQuery query)
         {
             var (nameOrTaxpayerId, except, count) = query;
             except ??= new int[0];

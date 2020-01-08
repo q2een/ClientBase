@@ -50,9 +50,8 @@ namespace ClientBase
                .UseMvc(routes =>
                {
                    routes.MapRoute(
-                   name: "pagination",
-                   template: "Company/Page/{productPage}",
-                   defaults: new { controller = "Company", Action = "List" });
+                   name: "company",
+                   template: "{controller=Founder}/{action=List}/{id?}");
 
                    routes.MapRoute(
                        name: "default",
