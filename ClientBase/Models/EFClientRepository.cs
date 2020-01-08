@@ -27,9 +27,15 @@ namespace ClientBase.Models
 
         public async Task DeleteFounderAsync(int id)
         {
-            var founder = await Founders.SingleOrDefaultAsync(f => f.FounderId == id);
+            var founder = await context.Founders.Include(f => f.FounderCompanies)
+                                                .ThenInclude(f => f.Company)
+                                                .ThenInclude(f => f.CompanyFounders)
+                                                .SingleOrDefaultAsync(f => f.FounderId == id);
 
-            context.Companies.RemoveRange(GetSingleFounderCompanies(id));
+            var companiesToRemove = founder.FounderCompanies.Where(f => f.Company.CompanyFounders.Count == 1)
+                                                            .Select(f => f.Company);
+
+            context.Companies.RemoveRange(companiesToRemove);
             context.Founders.Remove(founder);
 
             await context.SaveChangesAsync();
@@ -52,6 +58,27 @@ namespace ClientBase.Models
             entry.TaxpayerId = founder.TaxpayerId;
             entry.FullName = founder.FullName;
             entry.UpdateDate = founder.UpdateDate;
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateCompanyAsync(Company company)
+        {
+            if (company.CompanyId == 0)
+            {
+                context.Companies.Add(company);
+                await context.SaveChangesAsync();
+            }
+
+            var entry = await context.Companies
+                                     .SingleOrDefaultAsync(f => f.CompanyId == company.CompanyId);
+
+            if (entry == null)
+                throw new DbUpdateException("Entity doesn't exist in database");
+
+            entry.TaxpayerId = company.TaxpayerId;
+            entry.Name = company.Name;
+            entry.UpdateDate = company.UpdateDate;
 
             await context.SaveChangesAsync();
         }

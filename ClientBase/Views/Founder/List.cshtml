@@ -1,26 +1,39 @@
 ﻿@model IEnumerable<Founder>
-<div class="row">
-    <div class="action-buttons col-12">
-    <a class="btn btn-sm btn-success float-right" asp-action="Create">Добавить</a>
-    </div>
-    @foreach (var founder in Model)
-    {
-        <div class="col-6 mt-2">
-            <div class="card">
-                <div class="card-body">
-                    <h5 class="card-title">@founder.FullName</h5>
-                    <h6 class="card-subtitle mb-2 text-muted">ИНН: @founder.TaxpayerId</h6>
-                    <h6 class="card-subtitle mb-2 text-muted">Добавлена: @founder.CreationDate.ToString("dd/MM/yyyy в HH:mm")</h6>
-                    @if (founder.UpdateDate != null)
-                    {
-                        <h6 class="card-subtitle mb-2 text-muted">Изменено: @founder.UpdateDate?.ToString("dd/MM/yyyy в HH:mm")</h6>
-                    }
-                    <p class="card-text">Компании: @founder.FounderCompanies.Count</p>
-                    <a asp-action="Details" asp-route-id="@founder.FounderId" class="card-link">Подробнее</a>
-                    <a asp-action="Edit" asp-route-id="@founder.FounderId" class="btn btn-sm btn-light">Редактировать</a>
-                    <a class="float-right btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@founder.FounderId">Удалить</a>
+    <div class="row">
+        <div class="col">
+            <form asp-action="List" method="get">
+                <div class="input-group mb-3">
+                    <input type="text" class="form-control" name="SearchString" value="@ViewData["currentFilter"]" placeholder="Поиск по ФИО и ИНН" aria-label="Поиск">
+                    <div class="input-group-append">
+                        <button class="btn btn-info" type="submit">Найти</button>
+                    </div>
                 </div>
+            </form> 
             </div>
+        <div class="col">
+            <a class="btn btn-sm btn-success float-right" asp-action="Create">Добавить</a>
         </div>
-    }
-</div>
+        </div>
+                  
+        <div class="row">
+            @foreach (var founder in Model)
+            {
+                <div class="col-6 mt-2">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">@founder.FullName</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">ИНН: @founder.TaxpayerId</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">Добавлена: @founder.CreationDate.ToString("dd/MM/yyyy в HH:mm")</h6>
+                            @if (founder.UpdateDate != null)
+                            {
+                                <h6 class="card-subtitle mb-2 text-muted">Изменено: @founder.UpdateDate?.ToString("dd/MM/yyyy в HH:mm")</h6>
+                            }
+                            <p class="card-text">Компании: @founder.FounderCompanies.Count</p>
+                            <a asp-action="Details" asp-route-id="@founder.FounderId" class="card-link">Подробнее</a>
+                            <a asp-action="Edit" asp-route-id="@founder.FounderId" class="btn btn-sm btn-light">Редактировать</a>
+                            <a class="float-right btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@founder.FounderId">Удалить</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>

@@ -1,0 +1,111 @@
+﻿@model Company
+
+@using (Html.BeginForm("Edit", "Company", FormMethod.Post))
+{
+    @Html.HiddenFor(c => c.CompanyId)
+    <div class="form-group">
+        <div><span asp-validation-for="Name" class="text-danger"></span></div>
+        <select asp-for="IsIndividual" class="form-control">
+            <option value="">Тип компании</option>
+            <option value="true">Индивидуальный предприниматель</option>
+            <option value="false">Юридическое лицо</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <div><span asp-validation-for="Name" class="text-danger"></span></div>
+        <input asp-for="Name" class="form-control" />
+    </div>
+
+    <div class="form-group" id="founders">
+        <label asp-for="CompanyFounders"></label>
+
+        <input type="search" id="founder-search" class="form-control" placeholder="Поиск учредителя по ФИО и ИНН">
+        <div id="livesearch" class="w-100"></div>
+
+        @for (var i = 0; i < Model.CompanyFounders.Count; i++)
+        {
+            <input type="hidden" class="founder-item" name="CompanyFounders[@i].FounderId" value="@Model.CompanyFounders.ElementAt(i).FounderId" />
+            <p>@Model.CompanyFounders.ElementAt(i).Founder.FullName</p>
+        }
+    </div>
+
+    <div class="form-group">
+        <label asp-for="TaxpayerId"></label>
+        <div><span asp-validation-for="TaxpayerId" class="text-danger"></span></div>
+        <input asp-for="TaxpayerId" class="form-control" placeholder="10 цифр (12 для ИП)"
+               value="@if (Model.TaxpayerId != 0){ @Model.TaxpayerId }" />
+    </div>
+
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+
+    <div class="text-center">
+        <input class="btn btn-primary" type="submit" value="Сохранить">
+        <a asp-action="Index" class="btn btn-outline-danger">Отмена</a>
+    </div>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $("#founder-search").keyup(async function () {
+            let search = $(this).val();
+            let searchElem = $("#livesearch");
+            searchElem.empty();
+
+            if (search.length == 0)
+                return;
+
+            const response = await fetch('/Founder/GetFounders', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8'
+                },
+                credentials: 'include',
+                body: JSON.stringify(
+                    {
+                        text: search,
+                        except: $(".founder-item").map(function () { return parseInt($(this).attr("value")); }).get(),
+                        count: 5
+                    })
+            });
+            if (response.ok === true) {
+                const founders = await response.json();
+
+                if (founders.length == 0) {
+                    return;
+                }
+
+                $.each(founders, (index, value) => {
+                    let link = $("<a/>").attr("href", "#")
+                        .addClass("dropdown-item")
+                        .data("founder-name", value.name)
+                        .data("founder-id", value.id)
+                        .text(value.name);
+
+                    let muted = $("<small/>").addClass("text-muted ml-2")
+                        .text("ИНН: " + value.taxpayerId);
+
+                    link.append(muted);
+                    searchElem.append(link);
+                });
+            }
+        });
+
+        $('#livesearch').on('click', 'a', function (e) {
+            e.preventDefault();
+            this.remove();
+            let index = $(".founder-item").length;
+            let p = $("<p/>").text($(this).data("founder-name"));
+
+            let input = $("<input/>").attr("type", "hidden")
+                .attr("value", $(this).data("founder-id"))
+                .attr("name", `CompanyFounders[${index}].FounderId`)
+                .addClass("founder-item")
+                .text($(this).data("founder-name"));
+
+            $("#founders").append(p).append(input);
+        });
+    </script>
+}
+

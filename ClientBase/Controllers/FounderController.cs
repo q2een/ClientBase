@@ -17,11 +17,22 @@ namespace ClientBase.Controllers
             this.repository = repository;
         }
 
-        public async Task<IActionResult> Index() => await List();
+        public async Task<IActionResult> Index() => await List("");
 
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(string searchString)
         {
-            return View("List", await repository.Founders.ToListAsync());
+            ViewData["CurrentFilter"] = searchString;
+
+            var founders = repository.Founders;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                founders = founders.Where(f => f.FullName.Contains(searchString) || f.TaxpayerId.ToString().Contains(searchString));
+            }
+
+
+
+            return View(await founders.ToListAsync());
         }
 
         public async Task<IActionResult> Details(long? id)
@@ -38,12 +49,26 @@ namespace ClientBase.Controllers
         {
             var founder = await GetFounderAsync(id);
 
-            var a = repository.Companies.Where(cf => cf.CompanyFounders.Count > 1).ToArray();
-
             if (founder == null)
                 return NotFound();
 
             return View(founder);
+        }
+
+        [HttpPost]
+        public async Task<JsonResult> GetFounders([FromBody] SearchQuery query)
+        {
+            var (nameOrTaxpayerId, except, count) = query;
+            except ??= new int[0];
+
+            var founders = (await repository.Founders.Where(f => (!except.Contains(f.FounderId)) && 
+                                                                   (f.FullName.Contains(nameOrTaxpayerId) ||
+                                                                   f.TaxpayerId.ToString().Contains(nameOrTaxpayerId)))
+                .Take(count)
+                .ToArrayAsync())
+                .Select(f => new { Id = f.FounderId, Name = f.FullName, f.TaxpayerId });
+
+            return Json(founders);
         }
 
         [HttpPost]
