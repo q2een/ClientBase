@@ -9,8 +9,8 @@
 </ul>
 
 <div class="action">
-    <a asp-action="Edit" asp-route-id="@Model.CompanyId">Редактировать</a>
-    <a asp-action="Delete" asp-route-id="@Model.CompanyId" class="badge badge-danger">Удалить</a>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="badge badge-danger">Удалить</a>
 </div>
 
 @if (@Model.CompanyFounders.Any())

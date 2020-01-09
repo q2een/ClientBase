@@ -42,7 +42,7 @@ namespace ClientBase.Controllers
                 return null;
 
             return await repository.Companies
-                                   .SingleOrDefaultAsync(f => f.CompanyId == id);
+                                   .SingleOrDefaultAsync(f => f.Id == id);
         }
 
         public async Task<IActionResult> Edit(long? id)
@@ -63,7 +63,7 @@ namespace ClientBase.Controllers
 
             try
             {
-                var isNew = company.CompanyId == 0;
+                var isNew = company.Id == 0;
 
                 if (isNew)
                     company.CreationDate = DateTime.Now;
@@ -89,7 +89,7 @@ namespace ClientBase.Controllers
             foreach (var companyFounder in company.CompanyFounders)
             {
                 companyFounder.Company = company;
-                companyFounder.CompanyId = company.CompanyId;
+                companyFounder.CompanyId = company.Id;
             }
         }
 

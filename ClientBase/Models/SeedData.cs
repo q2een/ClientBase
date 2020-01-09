@@ -101,73 +101,97 @@ namespace ClientBase.Models
                 new Founder
                 {
                     TaxpayerId = 930857958271,
-                    FullName = "Александров Ираклий Дмитриевич",
+                    LastName = "Александров",
+                    FirstName = "Ираклий",
+                    Patronymic = "Дмитриевич",
                     CreationDate = new DateTime(2019, 4, 4)
                 },
                 new Founder
                 {
                     TaxpayerId = 927349824644,
-                    FullName = "Тимофеев Эдуард Станиславович",
+                    LastName = "Тимофеев",
+                    FirstName = "Эдуард",
+                    Patronymic = "Станиславович",
                     CreationDate = new DateTime(2019, 4, 3)
                 },
                 new Founder
                 {
                     TaxpayerId = 931563297390,
-                    FullName = "Ерофеева Мстислава Аркадьевна",
+                    LastName = "Ерофеева",
+                    FirstName = "Мстислава",
+                    Patronymic = "Аркадьевна",
                     CreationDate = new DateTime(2019, 4, 2)
                 },
                 new Founder
                 {
                     TaxpayerId = 946296369599,
-                    FullName = "Никитина Марта Вячеславовна",
+                    LastName = "Никитина",
+                    FirstName = "Марта",
+                    Patronymic = "Вячеславовна",
                     CreationDate = new DateTime(2019, 4, 1)
                 },
                 new Founder
                 {
                     TaxpayerId = 964331537437,
-                    FullName = "Киселёва Флора Степановна",
+                    LastName = "Киселёва",
+                    FirstName = "Флора",
+                    Patronymic = "Степановна",
                     CreationDate = new DateTime(2019, 3, 31)
                 },
                 new Founder
                 {
                     TaxpayerId = 931858976960,
-                    FullName = "Васильева Полина Львовна",
+                    LastName = "Васильева",
+                    FirstName = "Полина",
+                    Patronymic = "Львовна",
                     CreationDate = new DateTime(2019, 3, 30)
                 },
                 new Founder
                 {
                     TaxpayerId = 922244724724,
-                    FullName = "Семёнов Василий Станиславович",
+                    LastName = "Семёнов",
+                    FirstName = "Василий",
+                    Patronymic = "Станиславович",
                     CreationDate = new DateTime(2019, 3, 29)
                 },
                 new Founder
                 {
                     TaxpayerId = 921926953058,
-                    FullName = "Богданов Феоктист Леонидович",
+                    LastName = "Богданов",
+                    FirstName = "Феоктист",
+                    Patronymic = "Леонидович",
                     CreationDate = new DateTime(2019, 3, 28)
                 },
                 new Founder
                 {
                     TaxpayerId = 929243817587,
-                    FullName = "Изофатова Лидия Тарасовна",
+                    LastName = "Изофатова",
+                    FirstName = "Лидия",
+                    Patronymic = "Тарасовна",
                     CreationDate = new DateTime(2019, 3, 27)
                 },
                 new Founder
                 {
                     TaxpayerId = 935325422871,
-                    FullName = "Секунов Феликс Геннадиевич",
+                    LastName = "Секунов",
+                    FirstName = "Феликс",
+                    Patronymic = "Геннадиевич",
                     CreationDate = new DateTime(2019, 3, 26)
                 },
                 new Founder
                 {
                     TaxpayerId = 963771381782,
-                    FullName = "Григорьева Яна Егоровна",
+                    LastName = "Григорьева",
+                    FirstName = "Яна",
+                    Patronymic = "Егоровна",
                     CreationDate = new DateTime(2019, 3, 25)
                 },
                 new Founder
                 {
                     TaxpayerId = 900940141641,
-                    FullName = "Алексеев Андрей Русланович",
+                    LastName = "Алексеев",
+                    FirstName = "Андрей",
+                    Patronymic = "Русланович",
                     CreationDate = new DateTime(2019, 3, 24)
                 },
             };

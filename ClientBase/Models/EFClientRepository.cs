@@ -30,7 +30,7 @@ namespace ClientBase.Models
             var founder = await context.Founders.Include(f => f.FounderCompanies)
                                                 .ThenInclude(f => f.Company)
                                                 .ThenInclude(f => f.CompanyFounders)
-                                                .SingleOrDefaultAsync(f => f.FounderId == id);
+                                                .SingleOrDefaultAsync(f => f.Id == id);
 
             var companiesToRemove = founder.FounderCompanies.Where(f => f.Company.CompanyFounders.Count == 1)
                                                             .Select(f => f.Company);
@@ -43,20 +43,22 @@ namespace ClientBase.Models
 
         public async Task UpdateFounderAsync(Founder founder)
         {
-            if (founder.FounderId == 0)
+            if (founder.Id == 0)
             {
                 context.Founders.Add(founder);
                 await context.SaveChangesAsync();
             }
 
             var entry = await context.Founders
-                                     .SingleOrDefaultAsync(f => f.FounderId == founder.FounderId);
+                                     .SingleOrDefaultAsync(f => f.Id == founder.Id);
 
             if (entry == null)
                 throw new DbUpdateException("Entity doesn't exist in database");
 
             entry.TaxpayerId = founder.TaxpayerId;
-            entry.FullName = founder.FullName;
+            entry.FirstName = founder.FirstName;
+            entry.LastName = founder.LastName;
+            entry.Patronymic = founder.Patronymic;
             entry.UpdateDate = founder.UpdateDate;
 
             await context.SaveChangesAsync();
@@ -64,7 +66,7 @@ namespace ClientBase.Models
 
         public async Task UpdateCompanyAsync(Company company)
         {
-            if (company.CompanyId == 0)
+            if (company.Id == 0)
             {
                 context.Companies.Add(company);
                 await context.SaveChangesAsync();
@@ -72,7 +74,7 @@ namespace ClientBase.Models
 
             var entry = await context.Companies
                                      .Include(c => c.CompanyFounders)
-                                     .SingleOrDefaultAsync(f => f.CompanyId == company.CompanyId);
+                                     .SingleOrDefaultAsync(f => f.Id == company.Id);
 
             if (entry == null)
                 throw new DbUpdateException("Entity doesn't exist in database");
@@ -83,6 +85,40 @@ namespace ClientBase.Models
             entry.CompanyFounders = company.CompanyFounders;
 
             await context.SaveChangesAsync();
+        }
+
+        public async Task UpdateAsync<T>(T entity) where T: class, IClientEntity, new ()
+        {
+            switch(entity)
+            {
+                case Company company:
+                    await UpdateCompanyAsync(company);
+                    return;
+                case Founder founder:
+                    await UpdateFounderAsync(founder);
+                    return;
+                default:
+                    throw new ArgumentException(
+                        message: "Not recognized entity",
+                        paramName: nameof(entity));
+            }
+        }
+
+        public async Task DeleteAsync<T>(int id) where T : class, IClientEntity, new()
+        {
+            switch (new T())
+            {
+                case Company c:
+                    await DeleteFounderAsync(id);
+                    return;
+                case Founder f:
+                    await DeleteFounderAsync(id);
+                    return;
+                default:
+                    throw new ArgumentException(
+                        message: "Not recognized type",
+                        paramName: nameof(T));
+            }
         }
     }
 }

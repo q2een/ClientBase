@@ -2,7 +2,7 @@
 
 @using (Html.BeginForm("Edit", "Company", FormMethod.Post))
 {
-    @Html.HiddenFor(c => c.CompanyId)
+    @Html.HiddenFor(c => c.Id)
     <div class="form-group">
         <label asp-for="IsIndividual"></label>
         <div><span asp-validation-for="IsIndividual" class="text-danger"></span></div>

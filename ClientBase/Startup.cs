@@ -49,13 +49,27 @@ namespace ClientBase
                .UseStaticFiles()
                .UseMvc(routes =>
                {
-                   routes.MapRoute(
-                   name: "company",
-                   template: "{controller=Founder}/{action=List}/{id?}");
+                   //routes.MapRoute(
+                   // name: null,
+                   // template: "search/{search}/Page{pageNumber:int}",
+                   // defaults: new { controller = "Founder", action = "List" });
 
                    routes.MapRoute(
-                       name: "default",
-                       template: "{controller=Founder}/{action=List}/{id?}");
+                     name: null,
+                     template: "Page{pageNumber:int}",
+                     defaults: new { controller = "Founder", action = "List", pageNumber = 1 });
+
+                   //routes.MapRoute(
+                   // name: null,
+                   // template: "search/{search}",
+                   // defaults: new { controller = "Founder", action = "List", pageNumber = 1});
+
+                   routes.MapRoute(
+                       name: null,
+                       template: "",
+                       defaults: new { controller = "Founder", action = "List", pageNumber = 1 });
+
+                   routes.MapRoute(name: null, template: "{controller}/{action}/{id?}");
                });
 
             SeedData.EnsurePopulated(app);

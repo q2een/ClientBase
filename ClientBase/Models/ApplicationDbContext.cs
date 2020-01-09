@@ -27,11 +27,14 @@ namespace ClientBase.Models
                         .HasKey(cf => new { cf.FounderId, cf.CompanyId });
 
             modelBuilder.Entity<Founder>()
-                        .HasIndex(p => p.TaxpayerId)
+                        .Ignore(f => f.FullName);
+
+            modelBuilder.Entity<Founder>()
+                        .HasIndex(f => f.TaxpayerId)
                         .IsUnique();
 
             modelBuilder.Entity<Company>()
-                        .HasIndex(p => p.TaxpayerId)
+                        .HasIndex(c => c.TaxpayerId)
                         .IsUnique();
         }
 

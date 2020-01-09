@@ -1,4 +1,6 @@
-﻿using ClientBase.Models;
+﻿using ClientBase.Infrastructure;
+using ClientBase.Models;
+using ClientBase.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -12,6 +14,8 @@ namespace ClientBase.Controllers
     {
         private readonly IClientRepository repository;
 
+        public int PageSize { get; set; } = 3;
+
         public FounderController(IClientRepository repository)
         {
             this.repository = repository;
@@ -19,20 +23,32 @@ namespace ClientBase.Controllers
 
         public async Task<IActionResult> Index() => await List("");
 
-        public async Task<IActionResult> List(string searchString)
+        public async Task<IActionResult> List(string search, int pageNumber = 1)
         {
-            ViewData["CurrentFilter"] = searchString;
-
             var founders = repository.Founders;
 
-            if (!string.IsNullOrEmpty(searchString))
+            if (!string.IsNullOrEmpty(search))
             {
-                founders = founders.Where(f => f.FullName.Contains(searchString) || f.TaxpayerId.ToString().Contains(searchString));
+                founders = founders.Where(f => f.LastName.Contains(search) || 
+                                               f.TaxpayerId.ToString().Contains(search));
             }
 
+            var pages = new PagingInfo
+            {
+                CurrentPage = pageNumber,
+                ItemsPerPage = PageSize,
+                TotalItems = founders.Count()
+            };
 
+            founders = founders.Skip((pageNumber - 1) * PageSize)
+                               .Take(PageSize);
 
-            return View(await founders.ToListAsync());
+            return View(new ListViewModel<Founder>
+            {
+                Entities = await founders.ToListAsync(),
+                PagingInfo = pages,
+                Search = search
+            });
         }
 
         public async Task<IActionResult> Details(long? id)
@@ -61,12 +77,12 @@ namespace ClientBase.Controllers
             var (nameOrTaxpayerId, except, count) = query;
             except ??= new int[0];
 
-            var founders = (await repository.Founders.Where(f => (!except.Contains(f.FounderId)) && 
+            var founders = (await repository.Founders.Where(f => (!except.Contains(f.Id)) && 
                                                                    (f.FullName.Contains(nameOrTaxpayerId) ||
                                                                    f.TaxpayerId.ToString().Contains(nameOrTaxpayerId)))
                 .Take(count)
                 .ToArrayAsync())
-                .Select(f => new { Id = f.FounderId, Name = f.FullName, f.TaxpayerId });
+                .Select(f => new { Id = f.Id, Name = f.FullName, f.TaxpayerId });
 
             return Json(founders);
         }
@@ -79,7 +95,7 @@ namespace ClientBase.Controllers
 
             try
             {
-                var isNew = founder.FounderId == 0;
+                var isNew = founder.Id == 0;
 
                 if (isNew)
                     founder.CreationDate = DateTime.Now;
@@ -135,7 +151,7 @@ namespace ClientBase.Controllers
                 return null;
 
             return await repository.Founders
-                                   .SingleOrDefaultAsync(f => f.FounderId == id);
+                                   .SingleOrDefaultAsync(f => f.Id == id);
         }
     }
 }
