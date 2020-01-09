@@ -10,148 +10,43 @@ using System.Threading.Tasks;
 
 namespace ClientBase.Controllers
 {
-    public class FounderController : Controller
+    public class FounderController : ClientEntityController<Founder>
     {
-        private readonly IClientRepository repository;
+        #region Messages.
 
-        public int PageSize { get; set; } = 3;
+        protected override string CreationSuccessMessage => "Данные об учредителе успешно добавлены";
 
-        public FounderController(IClientRepository repository)
-        {
-            this.repository = repository;
-        }
+        protected override string UpdateSuccessMessage => "Данные об учредителе успешно обновлены";
 
-        public async Task<IActionResult> Index() => await List("");
+        protected override string UpdateFailedMessage => "Невозможно обновить информацию об учредителе. Возможно, учредитель был удален из базы данных";
 
-        public async Task<IActionResult> List(string search, int pageNumber = 1)
-        {
-            var founders = repository.Founders;
+        protected override string DeleteSuccessMessage => "Данные об учредителе успешно удалены";
 
-            if (!string.IsNullOrEmpty(search))
-            {
-                founders = founders.Where(f => f.LastName.Contains(search) || 
-                                               f.TaxpayerId.ToString().Contains(search));
-            }
-
-            var pages = new PagingInfo
-            {
-                CurrentPage = pageNumber,
-                ItemsPerPage = PageSize,
-                TotalItems = founders.Count()
-            };
-
-            founders = founders.Skip((pageNumber - 1) * PageSize)
-                               .Take(PageSize);
-
-            return View(new ListViewModel<Founder>
-            {
-                Entities = await founders.ToListAsync(),
-                PagingInfo = pages,
-                Search = search
-            });
-        }
-
-        public async Task<IActionResult> Details(long? id)
-        {
-            var founder = await GetFounderAsync(id);
-
-            if (founder == null)
-                return NotFound();
-
-            return View(founder);
-        }
-
-        public async Task<IActionResult> Edit(long? id)
-        {
-            var founder = await GetFounderAsync(id);
-
-            if (founder == null)
-                return NotFound();
-
-            return View(founder);
-        }
-
-        [HttpPost]
-        public async Task<JsonResult> Find([FromBody] SearchQuery query)
-        {
-            var (nameOrTaxpayerId, except, count) = query;
-            except ??= new int[0];
-
-            var founders = (await repository.Founders.Where(f => (!except.Contains(f.Id)) && 
-                                                                   (f.FullName.Contains(nameOrTaxpayerId) ||
-                                                                   f.TaxpayerId.ToString().Contains(nameOrTaxpayerId)))
-                .Take(count)
-                .ToArrayAsync())
-                .Select(f => new { Id = f.Id, Name = f.FullName, f.TaxpayerId });
-
-            return Json(founders);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(Founder founder)
-        {
-            if (!ModelState.IsValid)
-                return View(founder);
-
-            try
-            {
-                var isNew = founder.Id == 0;
-
-                if (isNew)
-                    founder.CreationDate = DateTime.Now;
-                else
-                    founder.UpdateDate = DateTime.Now;
-
-                await repository.UpdateFounderAsync(founder);
-                TempData["message"] = $"Данные об учредителе успешно {(isNew ? "добавлены" :"обновлены")}";
-            }
-            catch(DbUpdateException e)
-            {
-                ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе. Возможно, учредитель был удален из базы данных");
-                return View(founder);
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        public IActionResult Create() => View("Edit", new Founder());
-
-        public async Task<IActionResult> Delete(int? id)
-        {
-            var founder = await GetFounderAsync(id);
-
-            if (founder == null)
-                return NotFound();
-
-            return View(founder);
-        }
-
-        [HttpPost, ActionName("Delete")]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            try
-            {
-                await repository.DeleteFounderAsync(id);
-                TempData["message"] = $"Данные об учредителе успешно удалены";
-            }
-            catch (DbUpdateException e)
-            {
-                ViewData["ErrorMessage"] = "Ошибка при удалении учредителя из базы данны." + 
+        protected override string DeleteFailedMessage => "Ошибка при удалении учредителя из базы данны." +
                                "Попробуйте снова, и если проблема повторится, обратитесь к системному администатору";
 
-                return View(nameof(Delete), id);
-            }
+        #endregion
 
-            return RedirectToAction(nameof(Index));
+        protected override Func<Founder, object> SelectFromFound =>
+            f => new { Id = f.Id, Name = f.FullName, f.TaxpayerId };
+
+        public FounderController(IEntityRepository<Founder> repository) : base(repository)
+        {
         }
 
-        private async Task<Founder> GetFounderAsync(long? id)
+        protected override IQueryable<Founder> GetOrdered()
         {
-            if (id == null)
-                return null;
+            return Repository.Entities
+                             .OrderBy(f => f.UpdateDate)
+                             .ThenBy(f => f.CreationDate)
+                             .ThenBy(f => f.LastName);
+        }
 
-            return await repository.Founders
-                                   .SingleOrDefaultAsync(f => f.Id == id);
+        protected override IQueryable<Founder> GetFiltered(IQueryable<Founder> founders, string search)
+        {
+            return founders.Where(f => f.LastName.Contains(search) ||
+                                       f.FirstName.Contains(search) ||
+                                       f.TaxpayerId.ToString().Contains(search));
         }
     }
 }

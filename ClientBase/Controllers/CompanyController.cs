@@ -8,83 +8,57 @@ using System.Threading.Tasks;
 
 namespace ClientBase.Controllers
 {
-    public class CompanyController : Controller
+    public class CompanyController : ClientEntityController<Company>
     {
-        private readonly IClientRepository repository;
+        protected override Func<Company, object> SelectFromFound => throw new NotImplementedException();
 
-        public CompanyController(IClientRepository repository)
+        protected override string CreationSuccessMessage => throw new NotImplementedException();
+
+        protected override string UpdateSuccessMessage => throw new NotImplementedException();
+
+        protected override string UpdateFailedMessage => throw new NotImplementedException();
+
+        protected override string DeleteSuccessMessage => throw new NotImplementedException();
+
+        protected override string DeleteFailedMessage => throw new NotImplementedException();
+
+        protected override Action<Company> EditHook => EditHook1;
+
+        public CompanyController(IEntityRepository<Company> repository) 
+            :base(repository)
         {
-            this.repository = repository;
         }
 
-        public async Task<IActionResult> List(string searchString)
-        {
-            ViewData["CurrentFilter"] = searchString;
+        //[HttpPost]
+        //public async Task<IActionResult> Edit(Company company)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return View(company);
 
-            var companies = repository.Companies;
+        //    try
+        //    {
+        //        var isNew = company.Id == 0;
 
-            return View(await companies.ToListAsync());
-        }
+        //        if (isNew)
+        //            company.CreationDate = DateTime.Now;
+        //        else
+        //            company.UpdateDate = DateTime.Now;
 
-        public async Task<IActionResult> Details(long? id)
-        {
-            var company = await GetCompanyAsync(id);
+        //        EditHook(company);
 
-            if (company == null)
-                return NotFound();
+        //        await repository.UpdateCompanyAsync(company);
+        //        TempData["message"] = $"Данные об учредителе успешно {(isNew ? "добавлены" : "обновлены")}";
+        //    }
+        //    catch (DbUpdateException e)
+        //    {
+        //        ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе. Возможно, учредитель был удален из базы данных");
+        //        return View(company);
+        //    }
 
-            return View(company);
-        }
+        //    return RedirectToAction(nameof(Index));
+        //}
 
-        private async Task<Company> GetCompanyAsync(long? id)
-        {
-            if (id == null)
-                return null;
-
-            return await repository.Companies
-                                   .SingleOrDefaultAsync(f => f.Id == id);
-        }
-
-        public async Task<IActionResult> Edit(long? id)
-        {
-            var company = await GetCompanyAsync(id);
-
-            if (company == null)
-                return NotFound();
-
-            return View(company);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Edit(Company company)
-        {
-            if (!ModelState.IsValid)
-                return View(company);
-
-            try
-            {
-                var isNew = company.Id == 0;
-
-                if (isNew)
-                    company.CreationDate = DateTime.Now;
-                else
-                    company.UpdateDate = DateTime.Now;
-
-                EditHook(company);
-
-                await repository.UpdateCompanyAsync(company);
-                TempData["message"] = $"Данные об учредителе успешно {(isNew ? "добавлены" : "обновлены")}";
-            }
-            catch (DbUpdateException e)
-            {
-                ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе. Возможно, учредитель был удален из базы данных");
-                return View(company);
-            }
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        protected void EditHook(Company company)
+        protected void EditHook1(Company company)
         {
             foreach (var companyFounder in company.CompanyFounders)
             {
@@ -93,6 +67,14 @@ namespace ClientBase.Controllers
             }
         }
 
+        protected override IQueryable<Company> GetOrdered()
+        {
+            return Repository.Entities;
+        }
 
+        protected override IQueryable<Company> GetFiltered(IQueryable<Company> companies, string search)
+        {
+            return companies.Where(c => c.Name.Contains(search) || c.TaxpayerId.ToString().Contains(search));
+        }
     }
 }

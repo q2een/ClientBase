@@ -30,7 +30,8 @@ namespace ClientBase
             services.AddDbContext<ApplicationDbContext>(options =>
                     options.UseSqlServer(Configuration.GetConnectionString("ClientsDatabase")));
             services.AddMvc(options => options.EnableEndpointRouting = false);
-            services.AddTransient<IClientRepository, EFClientRepository>();
+            services.AddTransient<IEntityRepository<Company>, EFCompanyRepository>();
+            services.AddTransient<IEntityRepository<Founder>, EFFounderRepository>();
             services.Configure<WebEncoderOptions>(options =>
             {
                 options.TextEncoderSettings = new TextEncoderSettings(UnicodeRanges.All);
