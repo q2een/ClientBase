@@ -1,27 +1,32 @@
-﻿<!doctype html>
+﻿@{
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+}
+
+<!doctype html>
 <html lang="ru">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link rel="stylesheet" asp-href-include="/lib/bootstrap/dist/**/*.min.css" />
 
-    <title>@ViewBag.Title</title>
+    <title>@ViewBag.Title - База клиентов</title>
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container">
             <a class="navbar-brand" href="/">База клиентов</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarToggler" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <div class="collapse navbar-collapse" id="navbarToggler">
                 <ul class="navbar-nav ml-auto mt-2 mt-lg-0">
-                    <li class="nav-item active">
-                        <a class="nav-link" href="#">Компании <span class="sr-only">(current)</span></a>
+                    <li class="nav-item @(controllerName == "Company" ? "active" : "")">
+                        <a class="nav-link" asp-controller="Company" asp-action="List">Компании</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Учредители</a>
+                    <li class="nav-item @(controllerName == "Founder" ? "active" : "")">
+                        <a class="nav-link"
+                           asp-controller="Founder" asp-action="List">Учредители</a>
                     </li>
                 </ul>
             </div>

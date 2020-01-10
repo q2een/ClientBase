@@ -8,8 +8,9 @@ namespace ClientBase.Models
     {
         private readonly ApplicationDbContext context;
 
-        public IQueryable<Company> Entities => context.Companies.Include(c => c.CompanyFounders)
-                                                                .ThenInclude(cf => cf.Founder);
+        public IQueryable<Company> Entities => context.Companies.Include(c => c.CompanyFounders)                                                                
+                                                                .ThenInclude(cf => cf.Founder)
+                                                                .AsNoTracking();
 
         public EFCompanyRepository(ApplicationDbContext context)
         {

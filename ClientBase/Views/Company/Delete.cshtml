@@ -1,0 +1,14 @@
+﻿@model Company
+
+<h2>Удаление компании</h2>
+<p class="text-danger">@ViewData["ErrorMessage"]</p>
+<p>Вы действительно хотите удалить компанию <a asp-action="Details" asp-route-id="@Model.Id">«@Model.Name»</a>?</p>
+<p>ИНН компании: <strong>@Model.TaxpayerId</strong></p>
+<p>Информация об учредителях компании не будет удалена</p>
+<div class="text-center">
+    <form asp-action="Delete" method="post">
+        @Html.HiddenFor(с => с.Id)
+        <input class="btn btn-danger" type="submit" value="Удалить">
+        <a asp-action="Index" class="btn btn-outline-primary">Отмена</a>
+    </form>
+</div>

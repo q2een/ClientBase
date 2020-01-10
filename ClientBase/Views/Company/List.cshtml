@@ -1,0 +1,12 @@
+﻿@model ListViewModel<Company>
+@{
+    Layout = "_List";
+    ViewBag.Title = "Компании";
+}
+
+@foreach (var company in Model.Entities)
+{
+    <div class="col-6 mt-2">
+        @await Html.PartialAsync("CompanyCard", company)
+    </div>
+}

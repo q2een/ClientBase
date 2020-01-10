@@ -37,8 +37,8 @@ namespace ClientBase.Controllers
         protected override IQueryable<Founder> GetOrdered()
         {
             return Repository.Entities
-                             .OrderBy(f => f.UpdateDate)
-                             .ThenBy(f => f.CreationDate)
+                             .OrderByDescending(f => f.UpdateDate)
+                             .ThenByDescending(f => f.CreationDate)
                              .ThenBy(f => f.LastName);
         }
 

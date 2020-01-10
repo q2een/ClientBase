@@ -10,66 +10,48 @@ namespace ClientBase.Controllers
 {
     public class CompanyController : ClientEntityController<Company>
     {
-        protected override Func<Company, object> SelectFromFound => throw new NotImplementedException();
+        #region Messages.
 
-        protected override string CreationSuccessMessage => throw new NotImplementedException();
+        protected override string CreationSuccessMessage => 
+            "Компания успешно добавлена в базу клиентов";
 
-        protected override string UpdateSuccessMessage => throw new NotImplementedException();
+        protected override string UpdateSuccessMessage =>
+            "Информация о компании успешно обновлена";
 
-        protected override string UpdateFailedMessage => throw new NotImplementedException();
+        protected override string UpdateFailedMessage =>
+            "Невозможно обновить информацию о компании. Возможно компания была удалена";
 
-        protected override string DeleteSuccessMessage => throw new NotImplementedException();
+        protected override string DeleteSuccessMessage => 
+            "Информация о компании удалена";
 
-        protected override string DeleteFailedMessage => throw new NotImplementedException();
+        protected override string DeleteFailedMessage =>
+            "Ошибка при удалении компании из базы данны." +
+            "Попробуйте снова, и если проблема повторится, обратитесь к системному администатору";
 
-        protected override Action<Company> EditHook => EditHook1;
+        #endregion
 
-        public CompanyController(IEntityRepository<Company> repository) 
-            :base(repository)
+        protected override Func<Company, object> SelectFromFound => c => new { c.Id, c.Name, c.TaxpayerId };
+
+        protected override Action<Company> EditHook => company =>
         {
-        }
-
-        //[HttpPost]
-        //public async Task<IActionResult> Edit(Company company)
-        //{
-        //    if (!ModelState.IsValid)
-        //        return View(company);
-
-        //    try
-        //    {
-        //        var isNew = company.Id == 0;
-
-        //        if (isNew)
-        //            company.CreationDate = DateTime.Now;
-        //        else
-        //            company.UpdateDate = DateTime.Now;
-
-        //        EditHook(company);
-
-        //        await repository.UpdateCompanyAsync(company);
-        //        TempData["message"] = $"Данные об учредителе успешно {(isNew ? "добавлены" : "обновлены")}";
-        //    }
-        //    catch (DbUpdateException e)
-        //    {
-        //        ModelState.AddModelError("", $"Невозможно обновить информацию об учредителе. Возможно, учредитель был удален из базы данных");
-        //        return View(company);
-        //    }
-
-        //    return RedirectToAction(nameof(Index));
-        //}
-
-        protected void EditHook1(Company company)
-        {
-            foreach (var companyFounder in company.CompanyFounders)
+            foreach (var companyFounder in company?.CompanyFounders ?? new CompanyFounder[0])
             {
                 companyFounder.Company = company;
                 companyFounder.CompanyId = company.Id;
             }
+        };
+
+        public CompanyController(IEntityRepository<Company> repository)
+                    : base(repository)
+        {
         }
 
         protected override IQueryable<Company> GetOrdered()
         {
-            return Repository.Entities;
+            return Repository.Entities
+                             .OrderByDescending(c => c.UpdateDate)
+                             .ThenByDescending(c => c.CreationDate)
+                             .ThenBy(c => c.Name);
         }
 
         protected override IQueryable<Company> GetFiltered(IQueryable<Company> companies, string search)

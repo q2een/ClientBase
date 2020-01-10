@@ -1,0 +1,47 @@
+﻿@model ListViewModel
+@{
+    Layout = "_Layout";
+    var controllerName = this.ViewContext.RouteData.Values["controller"].ToString();
+}
+
+<div class="row">
+    <div class="col">
+        <form asp-action="List" method="get">
+            <div class="input-group mb-3">
+                <input id="search" type="search"
+                       class="form-control"
+                       name="search"
+                       data-livesearch-route="/@controllerName/Find"
+                       value="@Model.Search"
+                       placeholder="Найти..."
+                       aria-label="Поиск"
+                       autocomplete="off"
+                       data-toggle="dropdown"
+                       aria-haspopup="true"
+                       aria-expanded="false" />
+                <div class="dropdown-menu" aria-labelledby="search">
+                </div>
+                <div class="input-group-append">
+                    <button class="btn btn-secondary" type="submit">Найти</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-auto">
+        <a class="btn btn-success float-right" asp-action="Create">Добавить</a>
+    </div>
+</div>
+
+<div class="row">
+    @RenderBody()
+</div>
+<div class="row d-flex align-items-center justify-content-center mt-2">
+    <div page-model="@Model.PagingInfo" page-action="List" page-classes-enabled="true"
+         page-class="btn" page-class-normal="btn-secondary"
+         page-class-selected="btn-primary" page-url-search="@Model.Search"
+         class="btn-group m-1 text-center"></div>
+</div>
+
+@section Scripts {
+    <script src="~/js/site.js"></script>
+}

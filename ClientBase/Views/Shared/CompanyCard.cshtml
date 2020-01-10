@@ -1,0 +1,17 @@
+﻿@model Company
+
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Name</h5>
+        <h6 class="card-subtitle mb-2 text-muted">ИНН: @Model.TaxpayerId</h6>
+        <h6 class="card-subtitle mb-2 text-muted">Добавлена: @Model.CreationDate.ToString("dd/MM/yyyy в HH:mm")</h6>
+        @if (Model.UpdateDate != null)
+        {
+            <h6 class="card-subtitle mb-2 text-muted">Изменено: @Model.UpdateDate?.ToString("dd/MM/yyyy в HH:mm")</h6>
+        }
+        <p class="card-text">Учредители: @Model.CompanyFounders.Count</p>
+        <a asp-action="Details" asp-route-id="@Model.Id" class="card-link">Подробнее</a>
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-light">Редактировать</a>
+        <a class="float-right btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+    </div>
+</div>

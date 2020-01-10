@@ -4,7 +4,6 @@ using ClientBase.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -13,6 +12,8 @@ namespace ClientBase.Controllers
     public abstract class ClientEntityController<TEntity> : Controller 
         where TEntity : class, IClientEntity, new()
     {
+        #region Properties.
+
         protected IEntityRepository<TEntity> Repository { get; }
 
         protected virtual int PageSize { get; set; } = 10;
@@ -20,6 +21,8 @@ namespace ClientBase.Controllers
         protected abstract Func<TEntity, object> SelectFromFound { get; }
 
         protected virtual Action<TEntity> EditHook { get; }
+
+        #endregion
 
         #region Messages.
 
@@ -31,10 +34,16 @@ namespace ClientBase.Controllers
 
         #endregion
 
+        #region Constructors.
+
         protected ClientEntityController(IEntityRepository<TEntity> repository)
         {
             this.Repository = repository;
         }
+
+        #endregion
+
+        #region CRUD actions.
 
         public virtual async Task<IActionResult> Index(string search, int pageNumber = 1)
         {
@@ -60,7 +69,7 @@ namespace ClientBase.Controllers
             entities = entities.Skip((pageNumber - 1) * PageSize)
                                .Take(PageSize);
 
-            return View(new ListViewModel<TEntity>
+            return View(nameof(List), new ListViewModel<TEntity>
             {
                 Entities = await entities.ToListAsync(),
                 PagingInfo = pages,
@@ -73,6 +82,7 @@ namespace ClientBase.Controllers
         public virtual async Task<IActionResult> Edit(int? id) => await RepresentEntity("Edit", id);
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public virtual async Task<IActionResult> Edit(TEntity entity)
         {
             if (!ModelState.IsValid)
@@ -106,6 +116,7 @@ namespace ClientBase.Controllers
         public async Task<IActionResult> Delete(int? id) => await RepresentEntity("Delete", id);
 
         [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             try
@@ -122,13 +133,15 @@ namespace ClientBase.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        #endregion
+
         [HttpPost]
         public async Task<JsonResult> Find([FromBody] SearchQuery searchQuery)
         {
             var (nameOrTaxpayerId, except, count) = searchQuery;
             except ??= new int[0];
 
-            var entities = (await GetFiltered(Repository.Entities, searchQuery.Text)
+            var entities = (await GetFiltered(GetOrdered(), searchQuery.Text)
                                   .Where(e => !except.Contains(e.Id))
                                   .Take(searchQuery.Count)
                                   .ToArrayAsync())
@@ -141,7 +154,7 @@ namespace ClientBase.Controllers
 
         protected abstract IQueryable<TEntity> GetFiltered(IQueryable<TEntity> entities, string search);
 
-        protected virtual async Task<TEntity> GetEntityAsync(int? id)
+        protected async Task<TEntity> GetEntityAsync(int? id)
         {
             if (id == null)
                 return null;

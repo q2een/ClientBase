@@ -9,7 +9,8 @@ namespace ClientBase.Models
         private readonly ApplicationDbContext context;
 
         public IQueryable<Founder> Entities => context.Founders.Include(f => f.FounderCompanies)
-                                                               .ThenInclude(cf => cf.Company);
+                                                               .ThenInclude(cf => cf.Company)
+                                                               .AsNoTracking();
 
         public EFFounderRepository(ApplicationDbContext context)
         {
@@ -41,6 +42,7 @@ namespace ClientBase.Models
             }
 
             var entry = await context.Founders
+                                     .AsNoTracking()
                                      .SingleOrDefaultAsync(f => f.Id == founder.Id);
 
             if (entry == null)

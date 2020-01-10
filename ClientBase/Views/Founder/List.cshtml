@@ -1,45 +1,13 @@
-﻿@model ListViewModel<Founder>
-    <div class="row">
-        <div class="col">
-            <form asp-action="List" method="get">
-                <div class="input-group mb-3">
-                    <input type="text" class="form-control" name="search" value="@Model.Search" placeholder="Поиск по ФИО и ИНН" aria-label="Поиск">
-                    <div class="input-group-append">
-                        <button class="btn btn-info" type="submit">Найти</button>
-                    </div>
-                </div>
-            </form> 
-            </div>
-        <div class="col-auto">
-            <a class="btn btn-success float-right" asp-action="Create">Добавить</a>
-        </div>
-        </div>
-                  
-        <div class="row">
-            @foreach (var founder in Model.Entities)
-            {
-                <div class="col-6 mt-2">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="card-title">@founder.FullName</h5>
-                            <h6 class="card-subtitle mb-2 text-muted">ИНН: @founder.TaxpayerId</h6>
-                            <h6 class="card-subtitle mb-2 text-muted">Добавлена: @founder.CreationDate.ToString("dd/MM/yyyy в HH:mm")</h6>
-                            @if (founder.UpdateDate != null)
-                            {
-                                <h6 class="card-subtitle mb-2 text-muted">Изменено: @founder.UpdateDate?.ToString("dd/MM/yyyy в HH:mm")</h6>
-                            }
-                            <p class="card-text">Компании: @founder.FounderCompanies.Count</p>
-                            <a asp-action="Details" asp-route-id="@founder.Id" class="card-link">Подробнее</a>
-                            <a asp-action="Edit" asp-route-id="@founder.Id" class="btn btn-sm btn-light">Редактировать</a>
-                            <a class="float-right btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@founder.Id">Удалить</a>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-        <div class="row d-flex align-items-center justify-content-center mt-2">
-            <div page-model="@Model.PagingInfo" page-action="List" page-classes-enabled="true"
-                 page-class="btn" page-class-normal="btn-secondary"
-                 page-class-selected="btn-primary" page-url-search="@Model.Search"
-                 class="btn-group m-1 text-center"></div>
-        </div>
+﻿
+@model ListViewModel<Founder>
+@{
+    Layout = "_List";
+    ViewBag.Title = "Учредители";
+}
+
+@foreach (var founder in Model.Entities)
+{
+    <div class="col-6 mt-2">
+        @await Html.PartialAsync("FounderCard", founder)
+    </div>
+}
