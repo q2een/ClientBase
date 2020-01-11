@@ -141,9 +141,9 @@ namespace ClientBase.Controllers
             var (nameOrTaxpayerId, except, count) = searchQuery;
             except ??= new int[0];
 
-            var entities = (await GetFiltered(GetOrdered(), searchQuery.Text)
+            var entities = (await GetFiltered(GetOrdered(), nameOrTaxpayerId)
                                   .Where(e => !except.Contains(e.Id))
-                                  .Take(searchQuery.Count)
+                                  .Take(count)
                                   .ToArrayAsync())
                                   .Select(SelectFromFound);
 

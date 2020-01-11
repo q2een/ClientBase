@@ -1,5 +1,9 @@
 ﻿@model Company
 
+@{
+    ViewBag.Title = $"Подтверждение удаления компании";
+}
+
 <h2>Удаление компании</h2>
 <p class="text-danger">@ViewData["ErrorMessage"]</p>
 <p>Вы действительно хотите удалить компанию <a asp-action="Details" asp-route-id="@Model.Id">«@Model.Name»</a>?</p>

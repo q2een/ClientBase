@@ -34,6 +34,7 @@ namespace ClientBase.Models
         public DateTime? UpdateDate { get; set; }
 
         [Display(Name = "Учредители")]
+        [CompanyFounders]
         public ICollection<CompanyFounder> CompanyFounders { get; set; }
     }
 }

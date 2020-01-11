@@ -9,44 +9,29 @@ namespace ClientBase.Models.Validation
 
         protected override ValidationResult IsValid(object value, ValidationContext validationContext)
         {
-            if (!long.TryParse(value.ToString(), out var _))
-                return new ValidationResult("ИНН должен содержать только цифры");
-
             var instance = validationContext?.ObjectInstance;
             var valueLength = value.ToString().Length;
+            var propertyName = new string[] { validationContext.MemberName };
 
-            if (instance is Company company)
+            switch (instance)
             {
-                var propertyName = new string[] { nameof(company.TaxpayerId) };
-
-                if (company.IsIndividual == null)
+                case Company c when c.IsIndividual == null:
                     return new ValidationResult($"ИНН должен содержать {PersonTaxpayerIdLength} цифр " +
                                                 $"для индивидуального предпринимателя и {CompanyTaxpayerIdLength} цифр" +
                                                 "для юридического лица", propertyName);
 
-                if(company.IsIndividual == true)
-                {
-                    if (valueLength == PersonTaxpayerIdLength)
-                        return ValidationResult.Success;
-
+                case Company c when c.IsIndividual == true && valueLength != PersonTaxpayerIdLength:
                     return new ValidationResult($"ИНН индивидуального предпринимателя должен сожержать {PersonTaxpayerIdLength} цифр", propertyName);
-                }
 
-                if (valueLength == CompanyTaxpayerIdLength)
+                case Company _ when valueLength != CompanyTaxpayerIdLength:
+                    return new ValidationResult($"ИНН юридического лица должен содержать {PersonTaxpayerIdLength} цифр", propertyName);
+
+                case Founder _ when valueLength != PersonTaxpayerIdLength:
+                    return new ValidationResult($"ИНН должен сожержать {PersonTaxpayerIdLength} цифр", propertyName);
+
+                default:
                     return ValidationResult.Success;
-
-                return new ValidationResult($"ИНН юридического лица должен содержать {PersonTaxpayerIdLength} цифр", propertyName);
             }
-                           
-            if(instance is Founder founder)
-            {
-                if (valueLength == PersonTaxpayerIdLength)
-                    return ValidationResult.Success;
-
-                return new ValidationResult($"ИНН должен сожержать {PersonTaxpayerIdLength} цифр", new string[] { nameof(founder.TaxpayerId) });
-            }
-
-            return null;
         }
     }
 }

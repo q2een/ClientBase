@@ -44,6 +44,7 @@ namespace ClientBase.Controllers
 
         protected override IQueryable<Founder> GetFiltered(IQueryable<Founder> founders, string search)
         {
+            search = search?.Trim();
             return founders.Where(f => f.LastName.Contains(search) ||
                                        f.FirstName.Contains(search) ||
                                        f.TaxpayerId.ToString().Contains(search));

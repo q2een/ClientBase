@@ -8,19 +8,15 @@
     <div class="col">
         <form asp-action="List" method="get">
             <div class="input-group mb-3">
-                <input id="search" type="search"
+                <input id="list-search" 
+                       type="search"
                        class="form-control"
                        name="search"
                        data-livesearch-route="/@controllerName/Find"
                        value="@Model.Search"
                        placeholder="Найти..."
                        aria-label="Поиск"
-                       autocomplete="off"
-                       data-toggle="dropdown"
-                       aria-haspopup="true"
-                       aria-expanded="false" />
-                <div class="dropdown-menu" aria-labelledby="search">
-                </div>
+                       autocomplete="off"/>
                 <div class="input-group-append">
                     <button class="btn btn-secondary" type="submit">Найти</button>
                 </div>
@@ -43,5 +39,7 @@
 </div>
 
 @section Scripts {
+    <script src="~/lib/jquery.devbridge-autocomplete/jquery.autocomplete.min.js"></script>
     <script src="~/js/site.js"></script>
 }
+

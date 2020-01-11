@@ -28,8 +28,8 @@ namespace ClientBase.Models
         public string LastName { get; set; }
 
         [Display(Name = "Отчество (если имеется)")]
+        [StringLength(30, MinimumLength = 2, ErrorMessage = "Отчество должно содержать не менее двух букв")]
         [RegularExpression(@"^[А-Яа-я][А-Яа-я\'\-]+([А-Яа-я][А-Яа-я\'\-]+)*", ErrorMessage = "Отчество не должно содержать цифры или специальные знаки")]
-        [StringLength(30)]
         public string Patronymic { get; set; }
 
         public string FullName => $"{LastName} {FirstName} {Patronymic}".Trim();

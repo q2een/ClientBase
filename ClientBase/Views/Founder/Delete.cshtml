@@ -1,11 +1,18 @@
 ﻿@model Founder
 
-<h1>Удалить учредителя?</h1>
+@{
+    ViewBag.Title = $"Подтверждение удаления учредителя";
+}
+
+    <h2>Удаление учредителя</h2>
 <p class="text-danger">@ViewData["ErrorMessage"]</p>
-    <div class="text-center">
-        <form asp-action="Delete" method="post">
-            @Html.HiddenFor(f => f.Id)
-            <input class="btn btn-danger" type="submit" value="Удалить">
-            <a asp-action="Index" class="btn btn-outline-primary">Отмена</a>
-        </form>
-    </div>
+<p>Вы действительно хотите удалить учредителя <a asp-action="Details" asp-route-id="@Model.Id">@Model.FullName</a>?</p>
+<p>ИНН: <strong>@Model.TaxpayerId</strong></p>
+<p>Вместе с учредителем будет удалена информация о компаниях, в которых <a asp-action="Details" asp-route-id="@Model.Id">@Model.FullName</a> был(а) единственным учредителем</p>
+<div class="text-center">
+    <form asp-action="Delete" method="post">
+        @Html.HiddenFor(с => с.Id)
+        <input class="btn btn-danger" type="submit" value="Удалить">
+        <a asp-action="Index" class="btn btn-outline-primary">Отмена</a>
+    </form>
+</div>

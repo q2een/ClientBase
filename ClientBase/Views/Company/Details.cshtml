@@ -1,5 +1,9 @@
 ﻿@model Company;
 
+@{
+    ViewBag.Title = $"{Model.Name}";
+}
+
 <h2>@Model.Name</h2>
 <p class="h6 text-muted">ИНН: @Model.TaxpayerId</p>
 
@@ -15,20 +19,20 @@
 
 @if (@Model.CompanyFounders.Any())
 {
-<section class="companies mt-4">
-    <h3>Учредители</h3>
-    <ul class="list-group list-group-flush">
-        @{ var index = 1; }
-        @foreach (var company in Model.CompanyFounders)
-        {
-            <li class="list-group-item">
-                <span class="text-muted">@index </span>
-                <a asp-action="Details" asp-controller="Founder" class="stretched-link" asp-route-id="@company.FounderId">
-                    @company.Founder.FullName
-                </a>
-            </li>
-            index++;
-        }
-    </ul>
-</section>
+    <section class="companies mt-4">
+        <h3>Учредители</h3>
+        <ul class="list-group list-group-flush">
+            @{ var index = 1; }
+            @foreach (var company in Model.CompanyFounders)
+            {
+                <li class="list-group-item">
+                    <span class="text-muted">@index </span>
+                    <a asp-action="Details" asp-controller="Founder" class="stretched-link" asp-route-id="@company.FounderId">
+                        @company.Founder.FullName
+                    </a>
+                </li>
+                index++;
+            }
+        </ul>
+    </section>
 }

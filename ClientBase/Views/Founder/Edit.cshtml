@@ -1,5 +1,9 @@
 ﻿@model Founder
 
+@{ 
+    ViewBag.Title = Model.Id == 0 ? "Добавление компании" : $"{Model.FullName} - Редактирование";
+}
+
 @using (Html.BeginForm("Edit", "Founder", FormMethod.Post))
 {
 <input type="hidden" asp-for="Id" />

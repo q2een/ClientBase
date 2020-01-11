@@ -23,6 +23,10 @@
     {
       "library": "jquery-validate@1.19.1",
       "destination": "wwwroot/lib/jquery-validate/"
+    },
+    {
+      "library": "jquery.devbridge-autocomplete@1.4.10",
+      "destination": "wwwroot/lib/jquery.devbridge-autocomplete/"
     }
   ]
 }

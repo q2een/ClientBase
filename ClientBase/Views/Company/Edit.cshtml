@@ -1,6 +1,10 @@
 ﻿@model Company
 
-@using (Html.BeginForm("Edit", "Company", FormMethod.Post))
+@{
+    ViewBag.Title = Model.Id == 0 ? "Добавление учредителя" : $"{Model.Name} - Редактирование";
+}
+
+@using (Html.BeginForm("Edit", "Company", FormMethod.Post, new { id = "founder-edit" }))
 {
     @Html.HiddenFor(c => c.Id)
     <div class="form-group">
@@ -27,19 +31,23 @@
     </div>
 
     <div class="form-group" id="founders">
-        <label asp-for="CompanyFounders"></label>
-
-        <input type="search" id="FounderSearch" class="form-control" placeholder="Поиск учредителя по ФИО и ИНН">
-        <div id="livesearch" class="w-100 mb-2"></div>
+        <label for="founder-search">Учредители</label>
+        <div><span asp-validation-for="CompanyFounders" class="text-danger"></span></div>
+        <input type="search"
+               name="founder-search"
+               id="founder-search"
+               autocomplete="off"
+               class="form-control"
+               placeholder="Поиск учредителя по ФИО и ИНН" />
 
         <ul class="list-group">
-            @{ 
+            @{
                 Model.CompanyFounders = Model.CompanyFounders?.ToArray() ?? new CompanyFounder[0];
                 for (int i = 0; i < Model.CompanyFounders.Count; i++)
                 {
-                   @Html.EditorFor(m => (Model.CompanyFounders as CompanyFounder[])[i]);
+                    @Html.EditorFor(m => (Model.CompanyFounders as CompanyFounder[])[i]);
                 }
-             }
+            }
         </ul>
     </div>
 
@@ -53,52 +61,10 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script src="~/lib/jquery.devbridge-autocomplete/jquery.autocomplete.min.js"></script>
+    <script src="~/js/site.js"></script>
+
     <script>
-        async function getEntities(route, object, action, errorHandler) {
-            const response = await fetch(route, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json;charset=utf-8'
-                },
-                credentials: 'include',
-                body: JSON.stringify(object),
-            });
-
-            if (response.ok === true) {
-                const entities = await response.json();
-                action(entities);
-            }
-            else {
-                errorHandler(response.status);
-            }
-        }
-
-        async function completeLivesearch(container, entities, appendFunction) {
-            let search = $(this).val();
-
-            if (search.length == 0) {
-                container.empty().hide();
-                return;
-            }
-        }
-
-        $('form').submit(function (e) {
-            e.preventDefault();
-            var founders = $("a[data-founder-id]");
-
-            $.each(founders, function (index, value) {
-                let input = $("<input/>").attr("name", `CompanyFounders[${index}].FounderId`)
-                        .attr("type", "hidden")
-                        .val($(value)
-                        .data("founder-id"));
-                $(this).append(input);
-            });
-
-            console.log(founders);
-
-            if($(this).valid())
-                this.submit();
-        });
 
         let ids = ["#TaxpayerId", "#FounderSearch", "#Name"];
 
@@ -111,86 +77,20 @@
             if (isIndividual === true) {
 
             } else
-            if (isIndividual === false) {
+                if (isIndividual === false) {
 
-            }
-            else {
-                $.each(ids, function (index, value) {
-                    $(value).parent().hide();
-                });
-            }
+                }
+                else {
+                    $.each(ids, function (index, value) {
+                        $(value).parent().hide();
+                    });
+                }
         }
 
         $("#IsIndividual").on("load", onTypeChange);
 
         $("#IsIndividual").change(onTypeChange);
 
-        $("#FounderSearch").keyup(async function () {
-            let search = $(this).val();
-            let searchElem = $("#livesearch");
-            searchElem.empty();
-
-            if (search.length == 0)
-                return;
-
-            const founders = await getEntities('/Founder/Find', {
-                text: search,
-                except: $(".founder-item").map(function () { return parseInt($(this).attr("value")); }).get(),
-                count: 5
-            }, function (founders) {
-
-                if (founders.length == 0) {
-                    return;
-                }
-
-                $.each(founders, (index, value) => {
-                    let link = $("<a/>").attr("href", "#")
-                        .addClass("dropdown-item")
-                        .data("founder-name", value.name)
-                        .data("founder-id", value.id)
-                        .data("founder-taxpayer-id", value.taxpayerId)
-                        .text(value.name);
-
-                    let muted = $("<small/>").addClass("text-muted ml-2")
-                        .text("ИНН: " + value.taxpayerId);
-
-                    link.append(muted);
-                    searchElem.append(link);
-                });
-            });
-        });
-
-
-        $('#founders').on('click', 'a.remove-item', function (e) {
-            e.preventDefault();
-            $(this).parent("li").remove();
-        });
-
-        $('#livesearch').on('click', 'a', function (e) {
-            e.preventDefault();
-            this.remove();
-
-            let id = $(this).data("founder-id");
-            let li = $("<li/>").addClass("list-group-item d-flex justify-content-between align-items-center");
-            let div = $("<div/>");
-            let link = $("<a/>").attr("target", "_blank")
-                .attr("href", "/Founder/Details/" + id)
-                .attr("data-founder-id", id)
-                .text($(this).data("founder-name"));
-
-            let muted = $("<small/>").addClass("text-muted ml-2")
-                .text("ИНН: " + $(this).data("founder-taxpayer-id"));
-
-            let badge = $("<a/>").attr("href", "#")
-                .addClass("remove-item badge badge-secondary badge-pill")
-                .text("✕");
-            div.append(link).append(muted);
-            li.append(div).append(badge);
-
-            let ul = $("#founders>ul.list-group")[0];
-
-            $(ul).append(li);
-        });
     </script>
 }
 
