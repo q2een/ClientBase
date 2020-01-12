@@ -16,7 +16,7 @@ namespace ClientBase.Controllers
 
         protected IEntityRepository<TEntity> Repository { get; }
 
-        protected virtual int PageSize { get; set; } = 10;
+        protected virtual int PageSize { get; set; } = 8;
 
         protected abstract Func<TEntity, object> SelectFromFound { get; }
 

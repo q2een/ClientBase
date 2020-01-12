@@ -24,34 +24,33 @@ namespace ClientBase.Models
 
             var individualsCount = 5;
             var companiesCount = 5;
-            var companiesWithManyFounders = 2;
 
-            var individuals = founders.Take(individualsCount)
-                                      .Select(founder =>
-                                      {
-                                          var company = new Company
-                                          {
-                                              IsIndividual = true,
-                                              CreationDate = founder.CreationDate,
-                                              TaxpayerId = founder.TaxpayerId,
-                                              Name = $"ИП {founder.FullName}"
-                                          };
+            var individualCompanies = founders.Take(individualsCount)
+                                              .Select(founder =>
+                                              {
+                                                  var company = new Company
+                                                  {
+                                                      IsIndividual = true,
+                                                      CreationDate = founder.CreationDate,
+                                                      TaxpayerId = founder.TaxpayerId,
+                                                      Name = $"ИП {founder.FullName}",
+                                                  };
 
-                                          company.CompanyFounders = new CompanyFounder[]
-                                          {
-                                             new CompanyFounder
-                                             {
-                                                 Founder = founder,
-                                                 Company = company
-                                             }
-                                          };
+                                                  company.CompanyFounders = new CompanyFounder[]
+                                                  {
+                                                     new CompanyFounder
+                                                     {
+                                                         Founder = founder,
+                                                         Company = company
+                                                     }
+                                                  };
 
-                                          return company;
-                                      })
-                                      .ToArray();
+                                                  return company;
+                                              })
+                                              .ToArray();
 
             var companyIds = new long[] { 9636532799, 9377642012, 9363232123, 9807759547, 9786834517 };
-            var names = new string[] { "Пятерочка", "Дикси", "ДоДо", "Лента", "Доминос" };
+            var names = new string[] { "Пятерочка", "Дикси", "ДоДо Пицца", "Лента", "Доминос" };
 
             var companies = founders.Skip(individualsCount)
                                     .Take(companiesCount)
@@ -65,7 +64,7 @@ namespace ClientBase.Models
                                             CreationDate = founder.CreationDate
                                         };
                                     })
-                                    .ToArray();
+                                    .ToList();
 
             for (int i = 0; i < companiesCount; i++)
             {
@@ -78,20 +77,48 @@ namespace ClientBase.Models
                     },
                 };
 
-                if (i < companiesWithManyFounders)
-                    companyFounders.Add(new CompanyFounder
-                    {
-                        Founder = founders[companiesCount + individualsCount + i],
-                        Company = companies[i]
-                    });
-
                 companies[i].CompanyFounders = companyFounders;
             }
 
+            companies.Add(new Company
+            {
+                CreationDate = DateTime.Now,
+                Name = "Fix price",
+                TaxpayerId = 9901214323,
+                IsIndividual = false,
+            });
+
+            SetManyFounders(companies.Last(), founders.Take(individualsCount + companiesCount));
+
+            SetManyCompanies(founders.Skip(individualsCount + companiesCount).First(), companies);
+            SetManyCompanies(founders.Skip(individualsCount + companiesCount).Last(), companies);
+
             context.Founders.AddRange(founders);
-            context.Companies.AddRange(individuals);
+            context.Companies.AddRange(individualCompanies);
             context.Companies.AddRange(companies);
             context.SaveChanges();
+        }
+
+        private static void SetManyFounders(Company company, IEnumerable<Founder> founders)
+        {
+            company.CompanyFounders = founders.Select(founder => new CompanyFounder
+            {
+                Company = company,
+                Founder = founder
+            }).Union(company.CompanyFounders ?? new CompanyFounder[0])
+              .Distinct()
+              .ToList();
+        }
+
+        private static void SetManyCompanies(Founder founder, IEnumerable<Company> companies)
+        {
+            founder.FounderCompanies = companies.Select(company => new CompanyFounder
+            {
+                Company = company,
+                Founder = founder
+            }).Union(founder.FounderCompanies ?? new CompanyFounder[0])
+              .Distinct()
+              .ToList();
         }
 
         private static List<Founder> CreateFounders()

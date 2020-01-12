@@ -1,13 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text.Encodings.Web;
 using System.Text.Unicode;
-using System.Threading.Tasks;
 using ClientBase.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -50,25 +45,20 @@ namespace ClientBase
                .UseStaticFiles()
                .UseMvc(routes =>
                {
-                   //routes.MapRoute(
-                   // name: null,
-                   // template: "search/{search}/Page{pageNumber:int}",
-                   // defaults: new { controller = "Founder", action = "List" });
-
                    routes.MapRoute(
                      name: null,
-                     template: "Page{pageNumber:int}",
-                     defaults: new { controller = "Founder", action = "List", pageNumber = 1 });
+                     template: "{controller:regex(^Company$|Founder$)}/List/page{pageNumber:int}",
+                     defaults: new { controller = "Company", action = "List", pageNumber = 1 });
 
-                   //routes.MapRoute(
-                   // name: null,
-                   // template: "search/{search}",
-                   // defaults: new { controller = "Founder", action = "List", pageNumber = 1});
+                   routes.MapRoute(
+                        name: null,
+                        template: "{controller:regex(^Company$|Founder$)}/List/{id?}",
+                        defaults: new { controller = "Company", action="List"});
 
                    routes.MapRoute(
                        name: null,
                        template: "",
-                       defaults: new { controller = "Home", action = "Index", pageNumber = 1 });
+                       defaults: new { controller = "Home", action = "Index" });
 
                    routes.MapRoute(name: null, template: "{controller}/{action}/{id?}");
                });

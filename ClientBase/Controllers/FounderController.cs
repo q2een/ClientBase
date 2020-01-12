@@ -1,12 +1,6 @@
-﻿using ClientBase.Infrastructure;
-using ClientBase.Models;
-using ClientBase.Models.ViewModels;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+﻿using ClientBase.Models;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ClientBase.Controllers
 {
