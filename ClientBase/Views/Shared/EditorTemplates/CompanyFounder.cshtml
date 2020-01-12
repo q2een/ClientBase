@@ -2,12 +2,15 @@
 
 <li class="list-group-item d-flex justify-content-between align-items-center">
     <div>
-        <a target="_blank" asp-action="Details" asp-controller="Founder" asp-route-id="@Model.FounderId" data-founder-id="@Model.FounderId">
+        <a target="_blank" asp-action="Details" 
+                           asp-controller="Founder" 
+                           asp-route-id="@Model.FounderId" 
+                           data-founder-id="@Model.FounderId"
+                           data-founder-name="@Model.Founder.FullName"
+                           data-founder-taxpayer-id="@Model.Founder.TaxpayerId">
             @Model.Founder.FullName
         </a>
         <small class="ml-2 text-muted">ИНН: @Model.Founder.TaxpayerId</small>
-        @*<input type="hidden" name="FounderId" data-founder-id="@Model.FounderId" />
-        @Html.HiddenFor(cf => cf.FounderId)*@
     </div>
     <a href="#" class="remove-item badge badge-secondary badge-pill">✕</a>
 </li>

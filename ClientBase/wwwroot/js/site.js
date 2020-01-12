@@ -46,70 +46,136 @@ function getListLivesearchOptions(elem) {
     return getOptions(route, 5, [], onSelect)
 }
 
-function getFounderLivesearchOptions(elem) {
-    let onSelect = (suggestion) => {
-        let id = suggestion.data.id;
-        let li = $("<li/>").addClass("list-group-item d-flex justify-content-between align-items-center");
+if ($('#list-search').length) {
+    $('#list-search').autocomplete(getListLivesearchOptions($('#list-search')));
+}
+
+if ($('#founder-edit').length) {
+    let nameElem = $("#Name");
+    let taxpayerIdElem = $("#TaxpayerId");
+    let founderSearchElem = $("#founder-search");
+
+    function getFounderLivesearchOptions(elem) {
+        let onSelect = (suggestion) => {
+            let ul = $("#founders>ul.list-group").first();
+            $(ul).append(createFounderItem(suggestion.data));
+
+            updateAutocompleteOptions();
+            setFounderSearchState(getIsIndividualOption() == "true");
+        };
+
+        return getOptions('/Founder/Find/', 4, getFoundersId(), onSelect)
+    }
+
+    function createFounderItem(founder) {
+        let founderItem = $("<li/>").addClass("list-group-item d-flex justify-content-between align-items-center");
         let div = $("<div/>");
         let link = $("<a/>").attr("target", "_blank")
-            .attr("href", '/Founder/Details/' + id)
-            .attr("data-founder-id", id)
-            .text(suggestion.data.name);
+            .attr("href", '/Founder/Details/' + founder.id)
+            .attr("data-founder-id", founder.id)
+            .attr("data-founder-name", founder.name)
+            .attr("data-founder-taxpayer-id", founder.taxpayerId)
+            .text(founder.name);
 
         let muted = $("<small/>").addClass("text-muted ml-2")
-            .text("ИНН: " + suggestion.data.taxpayerId);
+            .text("ИНН: " + founder.taxpayerId);
 
         let badge = $("<a/>").attr("href", "#")
             .addClass("remove-item badge badge-secondary badge-pill")
             .text("✕");
         div.append(link).append(muted);
-        li.append(div).append(badge);
+        founderItem.append(div).append(badge);
 
-        let ul = $("#founders>ul.list-group")[0];
+        return founderItem;
+    }
 
-        $(ul).append(li);
+    function getFoundersId() {
+        return getFounders().map((i, e) => parseInt(e.dataset.founderId)).get();
+    }
 
-        $(elem).autocomplete().setOptions(getFounderLivesearchOptions(elem));
-        $(elem).autocomplete().clear();
-    };
+    function getFounders() {
+        return $("a[data-founder-id][data-founder-name][data-founder-taxpayer-id]");
+    }
 
-    let exceptIds = $("a[data-founder-id]").map(function () {
-        return parseInt($(this).data('founder-id'));
-    }).get();
+    function onTypeChange() {
+        let isIndividual = getIsIndividualOption();
 
-    return getOptions('/Founder/Find/', 4, exceptIds, onSelect)
-}
+        $.each([nameElem, taxpayerIdElem, founderSearchElem], function (index, value) {
+            value.parent().toggle(isIndividual != "");
+        });
 
-if ($('#list-search').length) {
-    $('#list-search').autocomplete(getListLivesearchOptions($('#list-search')));
-}
+        if (isIndividual != "") {
+            setFounderSearchState(isIndividual === 'true')
+        }
+    }
 
-if ($('#founder-search').length) {
-    $('#founder-search').autocomplete(getFounderLivesearchOptions($('#founder-search')));
+    function setFounderSearchState(isIndividualFounder) {
+
+        setReadonly(founderSearchElem, isIndividualFounder);
+        setReadonly(nameElem, isIndividualFounder);
+        setReadonly(taxpayerIdElem, isIndividualFounder);
+
+        if (isIndividualFounder) {
+            var founders = getFounders();
+
+            if (founders.length > 0) {
+                founderSearchElem.autocomplete().disable();
+            }
+            else
+                founderSearchElem.autocomplete().enable();
+
+            setReadonly(founderSearchElem, founders.length > 0);
+
+            if (founders.length == 1) {
+                nameElem.val(`ИП ${founders.first().data('founder-name')}`);
+                taxpayerIdElem.val(founders.first().data('founder-taxpayer-id'));
+            }
+        }
+    }
+
+    function getIsIndividualOption() {
+        return $("#IsIndividual")
+            .children("option:selected")
+            .first()
+            .val();
+    }
+
+    function setReadonly(elem, value) {
+        elem.attr('readonly', value);
+    }
+
+    function updateAutocompleteOptions() {
+        founderSearchElem.autocomplete().setOptions(getFounderLivesearchOptions(founderSearchElem));
+        founderSearchElem.autocomplete().clear();
+    }
+
+    $(document).ready(onTypeChange);
 
     $('#founders').on('click', 'a.remove-item', function (e) {
         e.preventDefault();
         $(this).parent("li").remove();
-        $('#founder-search').autocomplete().setOptions(getFounderLivesearchOptions($('#founder-search')));
-        $('#founder-search').clear();
+
+        updateAutocompleteOptions();
+        setFounderSearchState(getIsIndividualOption() == "true");
     });
 
+    $("#IsIndividual").change(onTypeChange);
 
-    if ($('form#founder-edit').length) {
-        $('form#founder-edit').submit(function (e) {
-            e.preventDefault();
-            var founders = $("a[data-founder-id]");
+    founderSearchElem.autocomplete(getFounderLivesearchOptions(founderSearchElem));
 
-            $.each(founders, function (index, value) {
-                let input = $("<input/>").attr("name", `CompanyFounders[${index}].FounderId`)
+    $('#founder-edit').submit(function (e) {
+        e.preventDefault();
+
+        if ($(this).valid()) {
+            $.each(getFoundersId(), function (index, id) {
+                let input = $("<input/>")
+                    .attr("name", `CompanyFounders[${index}].FounderId`)
                     .attr("type", "hidden")
-                    .val($(value).data("founder-id"));
-                $(this).append(input);
+                    .val(id);
+                $('#founder-edit').append(input);
             });
 
-            if ($(this).valid()) {
-                this.submit();
-            }
-        });
-    }
+            this.submit();
+        }
+    });
 }
