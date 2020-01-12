@@ -68,7 +68,7 @@ namespace ClientBase
                    routes.MapRoute(
                        name: null,
                        template: "",
-                       defaults: new { controller = "Founder", action = "List", pageNumber = 1 });
+                       defaults: new { controller = "Home", action = "Index", pageNumber = 1 });
 
                    routes.MapRoute(name: null, template: "{controller}/{action}/{id?}");
                });

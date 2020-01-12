@@ -1,4 +1,8 @@
-﻿.autocomplete-suggestions {
+﻿.validation.validation-summary-errors {
+    color: #dc3545;
+}
+
+.autocomplete-suggestions {
     border: 1px solid #999;
     background: #FFF;
     overflow: auto;
@@ -14,8 +18,8 @@
     border-radius: .25rem;
 }
 
-.autocomplete-suggestion {
-    padding: 2px 5px;
+.autocomplete-suggestion
+{
     white-space: nowrap;
     overflow: hidden;
     display: block;
@@ -46,7 +50,3 @@
     padding: .25rem 1.5rem;
 }
 
-.autocomplete-group strong {
-    display: block;
-    border-bottom: 1px solid #000;
-}

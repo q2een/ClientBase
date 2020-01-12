@@ -25,7 +25,7 @@ function getOptions(route, count, exceptIds, onSelect) {
                 count: count, except: exceptIds
             });
 
-            var result = {
+            let result = {
                 suggestions: $.map(entities, function (entity) {
                     return {
                         value: `${entity.name} (ИНН: ${entity.taxpayerId})`, data: entity};
@@ -46,6 +46,31 @@ function getListLivesearchOptions(elem) {
     return getOptions(route, 5, [], onSelect)
 }
 
+function getGlobalLivesearchOptions(elem) {
+    let route = '/Home/Find';
+    let onSelect = (suggestion) => window.location.pathname = `/${suggestion.data.type}/Details/${suggestion.data.id}`;
+    let options = getOptions(route, 3, [], onSelect);
+
+    options.groupBy = 'type';
+    options.formatGroup = function (suggestion, category) {
+        let group = $("<div/>").addClass("autocomplete-group d-flex w-100 justify-content-start");
+        let header = $("<strong/>").addClass("h5").text(category == 'Founder' ? 'Учредители' : 'Компании');
+        let searchString = elem.val();
+        let link = $("<a/>").addClass("ml-2")
+            .attr("href", `/${category}/List?search=${searchString}`)
+            .text("Продолжить поиск...");
+
+        group.append(header).append(link);
+        return group.wrap('<p/>').parent().html();
+    }
+
+    return options;
+}
+
+if ($('#global-search')) {
+    $('#global-search').autocomplete(getGlobalLivesearchOptions($('#global-search')));
+}
+
 if ($('#list-search').length) {
     $('#list-search').autocomplete(getListLivesearchOptions($('#list-search')));
 }
@@ -60,6 +85,7 @@ if ($('#founder-edit').length) {
             let ul = $("#founders>ul.list-group").first();
             $(ul).append(createFounderItem(suggestion.data));
 
+            elem.val("");
             updateAutocompleteOptions();
             setFounderSearchState(getIsIndividualOption() == "true");
         };
@@ -110,16 +136,16 @@ if ($('#founder-edit').length) {
     }
 
     function setFounderSearchState(isIndividualFounder) {
-
-        setReadonly(founderSearchElem, isIndividualFounder);
-        setReadonly(nameElem, isIndividualFounder);
-        setReadonly(taxpayerIdElem, isIndividualFounder);
+        $.each([nameElem, taxpayerIdElem], function (index, elem) {
+            setReadonly(elem, isIndividualFounder);
+        });
 
         if (isIndividualFounder) {
-            var founders = getFounders();
+            let founders = getFounders();
 
             if (founders.length > 0) {
                 founderSearchElem.autocomplete().disable();
+                founderSearchElem.val("");
             }
             else
                 founderSearchElem.autocomplete().enable();

@@ -40,6 +40,7 @@ namespace ClientBase.Models
             if (entry == null)
                 throw new DbUpdateException("Entity doesn't exist in database");
 
+            entry.IsIndividual = company.IsIndividual;
             entry.TaxpayerId = company.TaxpayerId;
             entry.Name = company.Name;
             entry.UpdateDate = company.UpdateDate;

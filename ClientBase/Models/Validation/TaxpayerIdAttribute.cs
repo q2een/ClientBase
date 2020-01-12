@@ -23,8 +23,8 @@ namespace ClientBase.Models.Validation
                 case Company c when c.IsIndividual == true && valueLength != PersonTaxpayerIdLength:
                     return new ValidationResult($"ИНН индивидуального предпринимателя должен сожержать {PersonTaxpayerIdLength} цифр", propertyName);
 
-                case Company _ when valueLength != CompanyTaxpayerIdLength:
-                    return new ValidationResult($"ИНН юридического лица должен содержать {PersonTaxpayerIdLength} цифр", propertyName);
+                case Company c when c.IsIndividual == false && valueLength != CompanyTaxpayerIdLength:
+                    return new ValidationResult($"ИНН юридического лица должен содержать {CompanyTaxpayerIdLength} цифр", propertyName);
 
                 case Founder _ when valueLength != PersonTaxpayerIdLength:
                     return new ValidationResult($"ИНН должен сожержать {PersonTaxpayerIdLength} цифр", propertyName);

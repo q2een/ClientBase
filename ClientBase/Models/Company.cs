@@ -20,7 +20,7 @@ namespace ClientBase.Models
         [StringLength(80, MinimumLength = 5, ErrorMessage = "Имя компании должно содержать не менее 5 и не более 80 символов")]
         public string Name { get; set; }
 
-        [Display(Name = "Тип компании (ИП или юридическое лицо)")]
+        [Display(Name = "Тип компании")]
         [Required(ErrorMessage = "Необходимо указать тип компании")]
         public bool? IsIndividual { get; set; }
 

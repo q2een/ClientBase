@@ -19,7 +19,7 @@ namespace ClientBase.Controllers
             "Информация о компании успешно обновлена";
 
         protected override string UpdateFailedMessage =>
-            "Невозможно обновить информацию о компании. Возможно компания была удалена";
+            "Компания с таким ИНН уже зарегистрирована";
 
         protected override string DeleteSuccessMessage => 
             "Информация о компании удалена";
@@ -49,14 +49,13 @@ namespace ClientBase.Controllers
         protected override IQueryable<Company> GetOrdered()
         {
             return Repository.Entities
-                             .OrderByDescending(c => c.UpdateDate)
-                             .ThenByDescending(c => c.CreationDate)
+                             .OrderByDescending(c => c.UpdateDate ?? c.CreationDate)
                              .ThenBy(c => c.Name);
         }
 
         protected override IQueryable<Company> GetFiltered(IQueryable<Company> companies, string search)
         {
-            return companies.Where(c => c.Name.Contains(search) || c.TaxpayerId.ToString().Contains(search));
+            return companies.Filter(search);
         }
     }
 }

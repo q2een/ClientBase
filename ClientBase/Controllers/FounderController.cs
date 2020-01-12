@@ -18,7 +18,7 @@ namespace ClientBase.Controllers
 
         protected override string UpdateSuccessMessage => "Данные об учредителе успешно обновлены";
 
-        protected override string UpdateFailedMessage => "Невозможно обновить информацию об учредителе. Возможно, учредитель был удален из базы данных";
+        protected override string UpdateFailedMessage => "Учредитель с таким ИНН уже зарегистрирован";
 
         protected override string DeleteSuccessMessage => "Данные об учредителе успешно удалены";
 
@@ -28,7 +28,7 @@ namespace ClientBase.Controllers
         #endregion
 
         protected override Func<Founder, object> SelectFromFound =>
-            f => new { Id = f.Id, Name = f.FullName, f.TaxpayerId };
+            f => new { f.Id, Name = f.FullName, f.TaxpayerId };
 
         public FounderController(IEntityRepository<Founder> repository) : base(repository)
         {
@@ -37,17 +37,13 @@ namespace ClientBase.Controllers
         protected override IQueryable<Founder> GetOrdered()
         {
             return Repository.Entities
-                             .OrderByDescending(f => f.UpdateDate)
-                             .ThenByDescending(f => f.CreationDate)
+                             .OrderByDescending(f => f.UpdateDate ?? f.CreationDate)
                              .ThenBy(f => f.LastName);
         }
 
         protected override IQueryable<Founder> GetFiltered(IQueryable<Founder> founders, string search)
         {
-            search = search?.Trim();
-            return founders.Where(f => f.LastName.Contains(search) ||
-                                       f.FirstName.Contains(search) ||
-                                       f.TaxpayerId.ToString().Contains(search));
+            return founders.Filter(search);
         }
     }
 }

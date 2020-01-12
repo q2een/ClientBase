@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Главная";
+}
+    <h1 class="text-center">База клиентов</h1>
+    <div class="row justify-content-center">
+        <div class="input-group col-12 col-lg-7 mb-5 mt-5">
+            <input id="global-search"
+                   type="search"
+                   class="form-control"
+                   name="search"
+                   placeholder="Найти учредителя или компанию по имени или ИНН"
+                   aria-label="Поиск"
+                   autocomplete="off" />
+        </div>
+        <div class="w-100"></div>
+        <div class="col-auto">
+            <a class="btn btn-sm btn-success" asp-action="Create" asp-controller="Founder">
+                Добавить учредителя
+            </a>
+        </div>
+        <div class="col-auto">
+            <a class="btn btn-sm btn-success" asp-action="Create" asp-controller="Company">
+                Добавить компанию
+            </a>
+        </div>
+    </div>
+
+@section Scripts {
+    <script src="~/lib/jquery.devbridge-autocomplete/jquery.autocomplete.min.js"></script>
+    <script src="~/js/site.js"></script>
+}
+
+
+

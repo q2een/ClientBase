@@ -6,7 +6,7 @@
 
 @foreach (var company in Model.Entities)
 {
-    <div class="col-6 mt-2">
+    <div class="col-lg-6 col-12 mt-2">
         @await Html.PartialAsync("CompanyCard", company)
     </div>
 }

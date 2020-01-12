@@ -41,8 +41,8 @@ namespace ClientBase.Models
                 await context.SaveChangesAsync();
             }
 
-            var entry = await context.Founders
-                                     .AsNoTracking()
+            var entry = await context.Founders.Include(f => f.FounderCompanies)
+                                     .ThenInclude(f => f.Company)
                                      .SingleOrDefaultAsync(f => f.Id == founder.Id);
 
             if (entry == null)
@@ -53,6 +53,17 @@ namespace ClientBase.Models
             entry.LastName = founder.LastName;
             entry.Patronymic = founder.Patronymic;
             entry.UpdateDate = founder.UpdateDate;
+
+            var individualCompany = entry.FounderCompanies
+                                         .Select(fc => fc.Company)
+                                         .SingleOrDefault(c => c.IsIndividual == true);
+
+            if(individualCompany != null)
+            {
+                individualCompany.UpdateDate = founder.UpdateDate;
+                individualCompany.TaxpayerId = founder.TaxpayerId;
+                individualCompany.Name = $"ИП {founder.FullName}";
+            }
 
             await context.SaveChangesAsync();
         }

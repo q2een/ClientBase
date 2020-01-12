@@ -4,35 +4,61 @@
     ViewBag.Title = $"{Model.FullName}";
 }
 
-<h2>@Model.FullName</h2>
-<p class="h6 text-muted">ИНН: @Model.TaxpayerId</p>
+<h2>@Model.FullName - Учредитель</h2>
 
-<ul class="list-inline">
-    <li class="list-inline-item">Добавлен в базу: @Model.CreationDate.ToLongDateString()</li>
-    <li class="list-inline-item">Информация обновлена: @Model.UpdateDate?.ToLongDateString()</li>
-</ul>
-
-<div class="action">
-    <a asp-action="Edit" asp-route-id="@Model.Id">Редактировать</a>
-    <a asp-action="Delete" asp-route-id="@Model.Id" class="badge badge-danger">Удалить</a>
+<div class="row mt-3 mb-3">
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-secondary ml-3 mr-3">Редактировать</a>
+    <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger">Удалить</a>
 </div>
 
-@if (@Model.FounderCompanies.Any())
-{
-    <section class="companies mt-4">
-        <h3>Является учредителем</h3>
-        <ul class="list-group list-group-flush">
-            @{ var index = 1; }
-            @foreach (var company in Model.FounderCompanies)
-            {
-                <li class="list-group-item">
-                    <span class="text-muted">@index </span>
-                    <a asp-action="Details" asp-controller="Company" class="stretched-link" asp-route-id="@company.CompanyId">
-                        @company.Company.Name
-                    </a>
-                </li>
-                index++;
-            }
-        </ul>
-    </section>
-}
+<dl class="row">
+    <dt class="col-sm-2">
+        <abbr title="Идентификационный номер налогоплательщика" class="initialism">ИНН</abbr>
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.TaxpayerId)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.CreationDate)
+    </dt>
+    <dd class="col-sm-10">
+        <time datetime="@Model.CreationDate.ToString("o")">@Model.CreationDate.ToString("dd/MM/yyyy в HH:mm")</time>
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.UpdateDate)
+    </dt>
+    <dd class="col-sm-10">
+        @if (Model.UpdateDate == null)
+        {
+            <span>Данные не редактировались</span>
+        }
+        else
+        {
+            <time datetime="@Model.UpdateDate?.ToString("o")">@Model.UpdateDate?.ToString("dd/MM/yyyy в HH:mm")</time>
+        }
+    </dd>
+
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.FounderCompanies)
+    </dt>
+    <dd class="col-sm-10">
+        @if (@Model.FounderCompanies.Any())
+        {
+            <ul class="list-group list-group-flush">
+                @{ var index = 1; }
+                @foreach (var founderCompany in Model.FounderCompanies)
+                {
+                    <li class="list-group-item">
+                        <span class="text-muted">@index</span>
+                        <a asp-action="Details" asp-controller="Company" class="stretched-link" asp-route-id="@founderCompany.CompanyId">
+                            @founderCompany.Company.Name
+                        </a>
+                    </li>
+                    index++;
+                }
+            </ul>
+        }
+        else
+            @("Нет компаний")
+    </dd>
+</dl>

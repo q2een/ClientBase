@@ -3,15 +3,37 @@
 <div class="card">
     <div class="card-body">
         <h5 class="card-title">@Model.Name</h5>
-        <h6 class="card-subtitle mb-2 text-muted">ИНН: @Model.TaxpayerId</h6>
-        <h6 class="card-subtitle mb-2 text-muted">Добавлена: @Model.CreationDate.ToString("dd/MM/yyyy в HH:mm")</h6>
-        @if (Model.UpdateDate != null)
-        {
-            <h6 class="card-subtitle mb-2 text-muted">Изменено: @Model.UpdateDate?.ToString("dd/MM/yyyy в HH:mm")</h6>
-        }
-        <p class="card-text">Учредители: @Model.CompanyFounders.Count</p>
-        <a asp-action="Details" asp-route-id="@Model.Id" class="card-link">Подробнее</a>
-        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-light">Редактировать</a>
-        <a class="float-right btn btn-danger btn-sm" asp-action="Delete" asp-route-id="@Model.Id">Удалить</a>
+        <dl class="row mb-0">
+            <dt class="col-4 text-muted">
+                <abbr title="Идентификационный номер налогоплательщика" class="initialism">ИНН</abbr>
+            </dt>
+            <dd class="col-8">
+                @Html.DisplayFor(model => model.TaxpayerId)
+            </dd>
+
+            @{
+                var isUpdated = Model.UpdateDate != null;
+                var date = isUpdated ? (DateTime)Model.UpdateDate : Model.CreationDate;
+            }
+
+            <dt class="col-4 text-muted">
+                @($"Дата {(isUpdated ? "обновления" : "добавления")}")
+            </dt>
+            <dd class="col-8">
+                <time datetime="" date.ToString("o")">@date.ToString("dd/MM/yyyy в HH:mm")</time>
+            </dd>
+
+            <dt class="col-4 text-muted">
+                Учредителей
+            </dt>
+            <dd class="col-8">
+                @Model.CompanyFounders.Count
+            </dd>
+        </dl>
+        <div class=" d-flex justify-content-end">
+            <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-danger btn-sm">Удалить</a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-sm btn-secondary ml-3 mr-3">Редактировать</a>
+            <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-sm btn-light">Подробнее</a>
+        </div>
     </div>
 </div>
